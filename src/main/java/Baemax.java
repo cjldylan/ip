@@ -46,7 +46,7 @@ public class Baemax {
             } else if (command.startsWith("unmark ")) {
                 updateTaskStatus(command, false);
             } else {
-                addTask(command);
+                addTask(parseTask(command));
             }
             System.out.println(line);
         }
@@ -62,15 +62,46 @@ public class Baemax {
     }
 
     /** Adds a new not-done task, provided the task limit has not been reached. */
-    private static void addTask(String description) {
+    private static void addTask(Task task) {
         if (taskCount >= MAX_TASKS) {
             System.out.println("Sorry, I cannot store more than " + MAX_TASKS + " tasks.");
             return;
         }
 
-        tasks[taskCount] = new Task(description);
+        tasks[taskCount] = task;
         taskCount++;
-        System.out.println("added: " + description);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + taskCount + " tasks in the list.");
+    }
+
+    /**
+     * Converts a command into the appropriate task subtype.
+     *
+     * @param command a todo, deadline, event, or plain task command
+     * @return the task represented by the command
+     */
+    private static Task parseTask(String command) {
+        if (command.startsWith("todo ")) {
+            return new Todo(command.substring("todo ".length()));
+        }
+
+        if (command.startsWith("deadline ")) {
+            String details = command.substring("deadline ".length());
+            String[] parts = details.split(" /by ", 2);
+            return new Deadline(parts[0], parts[1]);
+        }
+
+        if (command.startsWith("event ")) {
+            String details = command.substring("event ".length());
+            String[] fromParts = details.split(" /from ", 2);
+            String[] toParts = fromParts[1].split(" /to ", 2);
+            return new Event(fromParts[0], toParts[0], toParts[1]);
+        }
+
+        // Keep the earlier plain-text task behavior while the error-handling
+        // increment has not yet been implemented.
+        return new Todo(command);
     }
 
     /**
