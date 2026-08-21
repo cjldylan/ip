@@ -39,18 +39,38 @@ public class Baemax {
             }
 
             System.out.println(line);
-            if (command.equals("list")) {
-                displayTasks();
-            } else if (command.startsWith("mark ")) {
-                updateTaskStatus(command, true);
-            } else if (command.startsWith("unmark ")) {
-                updateTaskStatus(command, false);
-            } else {
-                addTask(parseTask(command));
+            try {
+                processCommand(command);
+            } catch (BaemaxException exception) {
+                System.out.println(exception.getMessage());
             }
             System.out.println(line);
         }
         scanner.close();
+    }
+
+    /**
+     * Executes one non-exit command.
+     *
+     * @param command the complete command entered by the user
+     * @throws BaemaxException when the command is invalid
+     */
+    private static void processCommand(String command) throws BaemaxException {
+        String trimmedCommand = command.trim();
+        if (trimmedCommand.isEmpty()) {
+            throw new BaemaxException(
+                    "Baemax did not catch a command. Try todo, list, mark, or bye.");
+        }
+
+        if (trimmedCommand.equals("list")) {
+            displayTasks();
+        } else if (trimmedCommand.equals("mark") || trimmedCommand.startsWith("mark ")) {
+            updateTaskStatus(trimmedCommand, true);
+        } else if (trimmedCommand.equals("unmark") || trimmedCommand.startsWith("unmark ")) {
+            updateTaskStatus(trimmedCommand, false);
+        } else {
+            addTask(parseTask(trimmedCommand));
+        }
     }
 
     /** Displays every stored task with a one-based task number. */
@@ -62,10 +82,9 @@ public class Baemax {
     }
 
     /** Adds a new not-done task, provided the task limit has not been reached. */
-    private static void addTask(Task task) {
+    private static void addTask(Task task) throws BaemaxException {
         if (taskCount >= MAX_TASKS) {
-            System.out.println("Sorry, I cannot store more than " + MAX_TASKS + " tasks.");
-            return;
+            throw new BaemaxException("Baemax's list is full. Please tidy up before adding more.");
         }
 
         tasks[taskCount] = task;
@@ -78,30 +97,64 @@ public class Baemax {
     /**
      * Converts a command into the appropriate task subtype.
      *
-     * @param command a todo, deadline, event, or plain task command
+     * @param command a todo, deadline, or event command
      * @return the task represented by the command
+     * @throws BaemaxException when the command is unknown or malformed
      */
-    private static Task parseTask(String command) {
-        if (command.startsWith("todo ")) {
-            return new Todo(command.substring("todo ".length()));
+    private static Task parseTask(String command) throws BaemaxException {
+        if (command.equals("todo") || command.startsWith("todo ")) {
+            String description = command.substring("todo".length()).trim();
+            if (description.isEmpty()) {
+                throw new BaemaxException(
+                        "Baemax needs a description for a todo. Try: todo <description>.");
+            }
+            return new Todo(description);
         }
 
-        if (command.startsWith("deadline ")) {
-            String details = command.substring("deadline ".length());
-            String[] parts = details.split(" /by ", 2);
-            return new Deadline(parts[0], parts[1]);
+        if (command.equals("deadline") || command.startsWith("deadline ")) {
+            String details = command.substring("deadline".length()).trim();
+            int byMarker = details.indexOf(" /by ");
+            if (byMarker < 0) {
+                throw new BaemaxException(
+                        "A deadline needs a due time. Try: deadline <description> /by <date or time>.");
+            }
+
+            String description = details.substring(0, byMarker).trim();
+            String by = details.substring(byMarker + " /by ".length()).trim();
+            if (description.isEmpty() || by.isEmpty()) {
+                throw new BaemaxException(
+                        "A deadline needs both a description and a due time.");
+            }
+            return new Deadline(description, by);
         }
 
-        if (command.startsWith("event ")) {
-            String details = command.substring("event ".length());
-            String[] fromParts = details.split(" /from ", 2);
-            String[] toParts = fromParts[1].split(" /to ", 2);
-            return new Event(fromParts[0], toParts[0], toParts[1]);
+        if (command.equals("event") || command.startsWith("event ")) {
+            String details = command.substring("event".length()).trim();
+            int fromMarker = details.indexOf(" /from ");
+            if (fromMarker < 0) {
+                throw new BaemaxException(
+                        "An event needs a start and end time. Try: event <description> /from <start> /to <end>.");
+            }
+
+            String description = details.substring(0, fromMarker).trim();
+            String timeRange = details.substring(fromMarker + " /from ".length()).trim();
+            int toMarker = timeRange.indexOf(" /to ");
+            if (toMarker < 0) {
+                throw new BaemaxException(
+                        "An event needs an end time. Add /to <end> after its start time.");
+            }
+
+            String from = timeRange.substring(0, toMarker).trim();
+            String to = timeRange.substring(toMarker + " /to ".length()).trim();
+            if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+                throw new BaemaxException(
+                        "An event needs a description, a start time, and an end time.");
+            }
+            return new Event(description, from, to);
         }
 
-        // Keep the earlier plain-text task behavior while the error-handling
-        // increment has not yet been implemented.
-        return new Todo(command);
+        throw new BaemaxException(
+                "Baemax does not know that command yet. Try todo, deadline, event, list, mark, unmark, or bye.");
     }
 
     /**
@@ -109,10 +162,27 @@ public class Baemax {
      *
      * @param command a command such as {@code mark 2} or {@code unmark 2}
      * @param completed whether the selected task should be marked done
+     * @throws BaemaxException when the command has no valid task number
      */
-    private static void updateTaskStatus(String command, boolean completed) {
+    private static void updateTaskStatus(String command, boolean completed) throws BaemaxException {
         String[] parts = command.split("\\s+");
-        int taskNumber = Integer.parseInt(parts[1]);
+        if (parts.length != 2) {
+            throw new BaemaxException(
+                    "Please include a task number, such as " + (completed ? "mark 2" : "unmark 2") + ".");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException exception) {
+            throw new BaemaxException("Task numbers look like 1, 2, or 3—not words.");
+        }
+
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            throw new BaemaxException(
+                    "That task number is out of range. Choose a number from 1 to " + taskCount + ".");
+        }
+
         Task task = tasks[taskNumber - 1];
 
         if (completed) {
