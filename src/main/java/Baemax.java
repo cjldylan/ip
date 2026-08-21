@@ -1,13 +1,14 @@
+import java.util.Scanner;
+
 /**
  * The Baemax chatbot entry point.
  */
-import java.util.Scanner;
 public class Baemax {
     /** Maximum number of tasks the chatbot keeps during one run. */
     private static final int MAX_TASKS = 100;
 
     /** Stores tasks in the order the user entered them. */
-    private static final String[] tasks = new String[MAX_TASKS];
+    private static final Task[] tasks = new Task[MAX_TASKS];
 
     /** Number of occupied entries in {@link #tasks}. */
     private static int taskCount = 0;
@@ -27,7 +28,7 @@ public class Baemax {
         System.out.println("What can I do for you?");
         String line = "__________________________________________";
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
 
             if (command.equals("bye")) {
@@ -40,12 +41,12 @@ public class Baemax {
             System.out.println(line);
             if (command.equals("list")) {
                 displayTasks();
-            } else if (taskCount < MAX_TASKS) {
-                tasks[taskCount] = command;
-                taskCount++;
-                System.out.println("added: " + command);
+            } else if (command.startsWith("mark ")) {
+                updateTaskStatus(command, true);
+            } else if (command.startsWith("unmark ")) {
+                updateTaskStatus(command, false);
             } else {
-                System.out.println("Sorry, I cannot store more than " + MAX_TASKS + " tasks.");
+                addTask(command);
             }
             System.out.println(line);
         }
@@ -54,8 +55,42 @@ public class Baemax {
 
     /** Displays every stored task with a one-based task number. */
     private static void displayTasks() {
+        System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < taskCount; i++) {
             System.out.println((i + 1) + ". " + tasks[i]);
         }
+    }
+
+    /** Adds a new not-done task, provided the task limit has not been reached. */
+    private static void addTask(String description) {
+        if (taskCount >= MAX_TASKS) {
+            System.out.println("Sorry, I cannot store more than " + MAX_TASKS + " tasks.");
+            return;
+        }
+
+        tasks[taskCount] = new Task(description);
+        taskCount++;
+        System.out.println("added: " + description);
+    }
+
+    /**
+     * Marks or unmarks a task selected by its one-based list number.
+     *
+     * @param command a command such as {@code mark 2} or {@code unmark 2}
+     * @param completed whether the selected task should be marked done
+     */
+    private static void updateTaskStatus(String command, boolean completed) {
+        String[] parts = command.split("\\s+");
+        int taskNumber = Integer.parseInt(parts[1]);
+        Task task = tasks[taskNumber - 1];
+
+        if (completed) {
+            task.markAsDone();
+            System.out.println("Nice! I've marked this task as done:");
+        } else {
+            task.markAsUndone();
+            System.out.println("OK, I've marked this task as not done yet:");
+        }
+        System.out.println("  " + task);
     }
 }
