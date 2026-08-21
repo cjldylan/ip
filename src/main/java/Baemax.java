@@ -1,17 +1,12 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * The Baemax chatbot entry point.
  */
 public class Baemax {
-    /** Maximum number of tasks the chatbot keeps during one run. */
-    private static final int MAX_TASKS = 100;
-
     /** Stores tasks in the order the user entered them. */
-    private static final Task[] tasks = new Task[MAX_TASKS];
-
-    /** Number of occupied entries in {@link #tasks}. */
-    private static int taskCount = 0;
+    private static final ArrayList<Task> tasks = new ArrayList<>(100);
 
     /**
      * Runs the chatbot and responds to user commands until the user says goodbye.
@@ -59,7 +54,7 @@ public class Baemax {
         String trimmedCommand = command.trim();
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
-                    "Baemax did not catch a command. Try todo, list, mark, or bye.");
+                    "Baemax did not catch a command. Try todo, list, mark, delete, or bye.");
         }
 
         if (trimmedCommand.equals("list")) {
@@ -68,6 +63,8 @@ public class Baemax {
             updateTaskStatus(trimmedCommand, true);
         } else if (trimmedCommand.equals("unmark") || trimmedCommand.startsWith("unmark ")) {
             updateTaskStatus(trimmedCommand, false);
+        } else if (trimmedCommand.equals("delete") || trimmedCommand.startsWith("delete ")) {
+            deleteTask(trimmedCommand);
         } else {
             addTask(parseTask(trimmedCommand));
         }
@@ -76,22 +73,17 @@ public class Baemax {
     /** Displays every stored task with a one-based task number. */
     private static void displayTasks() {
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + ". " + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
         }
     }
 
-    /** Adds a new not-done task, provided the task limit has not been reached. */
-    private static void addTask(Task task) throws BaemaxException {
-        if (taskCount >= MAX_TASKS) {
-            throw new BaemaxException("Baemax's list is full. Please tidy up before adding more.");
-        }
-
-        tasks[taskCount] = task;
-        taskCount++;
+    /** Adds a new not-done task to the end of the collection. */
+    private static void addTask(Task task) {
+        tasks.add(task);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -154,7 +146,7 @@ public class Baemax {
         }
 
         throw new BaemaxException(
-                "Baemax does not know that command yet. Try todo, deadline, event, list, mark, unmark, or bye.");
+                "Baemax does not know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
     }
 
     /**
@@ -165,25 +157,8 @@ public class Baemax {
      * @throws BaemaxException when the command has no valid task number
      */
     private static void updateTaskStatus(String command, boolean completed) throws BaemaxException {
-        String[] parts = command.split("\\s+");
-        if (parts.length != 2) {
-            throw new BaemaxException(
-                    "Please include a task number, such as " + (completed ? "mark 2" : "unmark 2") + ".");
-        }
-
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(parts[1]);
-        } catch (NumberFormatException exception) {
-            throw new BaemaxException("Task numbers look like 1, 2, or 3—not words.");
-        }
-
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new BaemaxException(
-                    "That task number is out of range. Choose a number from 1 to " + taskCount + ".");
-        }
-
-        Task task = tasks[taskNumber - 1];
+        int taskNumber = parseTaskNumber(command, completed ? "mark" : "unmark");
+        Task task = tasks.get(taskNumber - 1);
 
         if (completed) {
             task.markAsDone();
@@ -193,5 +168,36 @@ public class Baemax {
             System.out.println("OK, I've marked this task as not done yet:");
         }
         System.out.println("  " + task);
+    }
+
+    /** Removes a task selected by its one-based list number. */
+    private static void deleteTask(String command) throws BaemaxException {
+        int taskNumber = parseTaskNumber(command, "delete");
+        Task removedTask = tasks.remove(taskNumber - 1);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removedTask);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /** Parses and validates the task number in a task-selection command. */
+    private static int parseTaskNumber(String command, String action) throws BaemaxException {
+        String[] parts = command.split("\\s+");
+        if (parts.length != 2) {
+            throw new BaemaxException(
+                    "Please include a task number, such as " + action + " 2.");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException exception) {
+            throw new BaemaxException("Task numbers look like 1, 2, or 3—not words.");
+        }
+
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new BaemaxException(
+                    "That task number is out of range. Choose a number from 1 to " + tasks.size() + ".");
+        }
+        return taskNumber;
     }
 }
