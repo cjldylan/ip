@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * The Baemax chatbot entry point.
@@ -11,42 +10,38 @@ public class Baemax {
     /** Reads and writes {@link #tasks} to disk so they persist between runs. */
     private static final Storage storage = new Storage("data/baemax.txt");
 
+    /** Handles reading commands from and printing responses to the user. */
+    private static final Ui ui = new Ui();
+
     /**
      * Runs the chatbot and responds to user commands until the user says goodbye.
      *
      * @param args command-line arguments, which this chatbot does not use
      */
     public static void main(String[] args) {
-        String banner = "╔════════════════╗\n"
-                + "║     Baemax     ║\n"
-                + "╚════════════════╝\n";
-        System.out.println(banner);
+        ui.showWelcome();
 
         tasks.addAll(storage.load());
 
-        System.out.println("Hello, I am Baemax ✨");
-        System.out.println("What can I do for you?");
-        String line = "__________________________________________";
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
+        while (ui.hasNextCommand()) {
+            String command = ui.readCommand();
 
             if (command.equals("bye")) {
-                System.out.println(line);
-                System.out.println("Bye! Baemax is powering down. Have a lovely day!");
-                System.out.println(line);
+                ui.showLine();
+                ui.showGoodbye();
+                ui.showLine();
                 break;
             }
 
-            System.out.println(line);
+            ui.showLine();
             try {
                 processCommand(command);
             } catch (BaemaxException exception) {
-                System.out.println(exception.getMessage());
+                ui.showError(exception.getMessage());
             }
-            System.out.println(line);
+            ui.showLine();
         }
-        scanner.close();
+        ui.close();
     }
 
     /**
@@ -77,9 +72,9 @@ public class Baemax {
 
     /** Displays every stored task with a one-based task number. */
     private static void displayTasks() {
-        System.out.println("Here are the tasks in your list:");
+        ui.show("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
+            ui.show((i + 1) + ". " + tasks.get(i));
         }
     }
 
@@ -87,9 +82,9 @@ public class Baemax {
     private static void addTask(Task task) {
         tasks.add(task);
         storage.save(tasks);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        ui.show("Got it. I've added this task:",
+                "  " + task,
+                "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -169,13 +164,13 @@ public class Baemax {
 
         if (completed) {
             task.markAsDone();
-            System.out.println("Nice! I've marked this task as done:");
+            ui.show("Nice! I've marked this task as done:");
         } else {
             task.markAsUndone();
-            System.out.println("OK, I've marked this task as not done yet:");
+            ui.show("OK, I've marked this task as not done yet:");
         }
         storage.save(tasks);
-        System.out.println("  " + task);
+        ui.show("  " + task);
     }
 
     /** Removes a task selected by its one-based list number and saves the list. */
@@ -183,9 +178,9 @@ public class Baemax {
         int taskNumber = parseTaskNumber(command, "delete");
         Task removedTask = tasks.remove(taskNumber - 1);
         storage.save(tasks);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removedTask);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        ui.show("Noted. I've removed this task:",
+                "  " + removedTask,
+                "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /** Parses and validates the task number in a task-selection command. */
