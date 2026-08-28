@@ -46,4 +46,16 @@ public class Task {
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
     }
+
+    /**
+     * Encodes the fields shared by every task for the save file as
+     * {@code <status> | <description>}, where status is {@code 1} when the
+     * task is done and {@code 0} otherwise. Subtypes prepend a type tag and
+     * append their own fields.
+     *
+     * @return the save-file representation of this task
+     */
+    public String toFileFormat() {
+        return (isDone ? "1" : "0") + " | " + description;
+    }
 }

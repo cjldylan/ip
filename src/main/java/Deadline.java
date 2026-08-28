@@ -25,4 +25,15 @@ public class Deadline extends Task {
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by + ")";
     }
+
+    /**
+     * Prefixes the shared fields with the deadline type tag {@code D} and
+     * appends the due text.
+     *
+     * @return the save-file representation of this deadline
+     */
+    @Override
+    public String toFileFormat() {
+        return "D | " + super.toFileFormat() + " | " + by;
+    }
 }

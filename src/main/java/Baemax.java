@@ -8,6 +8,9 @@ public class Baemax {
     /** Stores tasks in the order the user entered them. */
     private static final ArrayList<Task> tasks = new ArrayList<>(100);
 
+    /** Reads and writes {@link #tasks} to disk so they persist between runs. */
+    private static final Storage storage = new Storage("data/baemax.txt");
+
     /**
      * Runs the chatbot and responds to user commands until the user says goodbye.
      *
@@ -18,6 +21,8 @@ public class Baemax {
                 + "║     Baemax     ║\n"
                 + "╚════════════════╝\n";
         System.out.println(banner);
+
+        tasks.addAll(storage.load());
 
         System.out.println("Hello, I am Baemax ✨");
         System.out.println("What can I do for you?");
@@ -78,9 +83,10 @@ public class Baemax {
         }
     }
 
-    /** Adds a new not-done task to the end of the collection. */
+    /** Adds a new not-done task to the end of the collection and saves the list. */
     private static void addTask(Task task) {
         tasks.add(task);
+        storage.save(tasks);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -167,13 +173,15 @@ public class Baemax {
             task.markAsUndone();
             System.out.println("OK, I've marked this task as not done yet:");
         }
+        storage.save(tasks);
         System.out.println("  " + task);
     }
 
-    /** Removes a task selected by its one-based list number. */
+    /** Removes a task selected by its one-based list number and saves the list. */
     private static void deleteTask(String command) throws BaemaxException {
         int taskNumber = parseTaskNumber(command, "delete");
         Task removedTask = tasks.remove(taskNumber - 1);
+        storage.save(tasks);
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");

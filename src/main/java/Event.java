@@ -30,4 +30,15 @@ public class Event extends Task {
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Prefixes the shared fields with the event type tag {@code E} and
+     * appends the start and end text.
+     *
+     * @return the save-file representation of this event
+     */
+    @Override
+    public String toFileFormat() {
+        return "E | " + super.toFileFormat() + " | " + from + " | " + to;
+    }
 }
