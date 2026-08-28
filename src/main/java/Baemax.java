@@ -131,7 +131,8 @@ public class Baemax {
             int fromMarker = details.indexOf(" /from ");
             if (fromMarker < 0) {
                 throw new BaemaxException(
-                        "An event needs a start and end time. Try: event <description> /from <start> /to <end>.");
+                        "An event needs a start and end date. Try: "
+                        + "event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
             }
 
             String description = details.substring(0, fromMarker).trim();
@@ -139,16 +140,16 @@ public class Baemax {
             int toMarker = timeRange.indexOf(" /to ");
             if (toMarker < 0) {
                 throw new BaemaxException(
-                        "An event needs an end time. Add /to <end> after its start time.");
+                        "An event needs an end date. Add /to <yyyy-MM-dd> after its start date.");
             }
 
             String from = timeRange.substring(0, toMarker).trim();
             String to = timeRange.substring(toMarker + " /to ".length()).trim();
             if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
                 throw new BaemaxException(
-                        "An event needs a description, a start time, and an end time.");
+                        "An event needs a description, a start date, and an end date.");
             }
-            return new Event(description, from, to);
+            return new Event(description, Dates.parse(from), Dates.parse(to));
         }
 
         throw new BaemaxException(

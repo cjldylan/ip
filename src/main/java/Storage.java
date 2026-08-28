@@ -127,9 +127,9 @@ public class Storage {
         }
         if (type.equals("E")) {
             if (parts.length < 5) {
-                throw new BaemaxException("A saved event needs a start and an end time.");
+                throw new BaemaxException("A saved event needs a start and an end date.");
             }
-            return new Event(description, parts[3], parts[4]);
+            return new Event(description, Dates.parse(parts[3]), Dates.parse(parts[4]));
         }
         throw new BaemaxException("Unknown task type in the save file: " + type);
     }
