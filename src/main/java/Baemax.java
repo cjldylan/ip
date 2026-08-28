@@ -1,11 +1,11 @@
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Baemax chatbot entry point.
  */
 public class Baemax {
-    /** Stores tasks in the order the user entered them. */
-    private static final ArrayList<Task> tasks = new ArrayList<>(100);
+    /** The tasks the user is tracking. */
+    private static TaskList tasks = new TaskList();
 
     /** Reads and writes {@link #tasks} to disk so they persist between runs. */
     private static final Storage storage = new Storage("data/baemax.txt");
@@ -21,7 +21,7 @@ public class Baemax {
     public static void main(String[] args) {
         ui.showWelcome();
 
-        tasks.addAll(storage.load());
+        tasks = new TaskList(storage.load());
 
         while (ui.hasNextCommand()) {
             String command = ui.readCommand();
@@ -73,15 +73,16 @@ public class Baemax {
     /** Displays every stored task with a one-based task number. */
     private static void displayTasks() {
         ui.show("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            ui.show((i + 1) + ". " + tasks.get(i));
+        List<Task> all = tasks.asList();
+        for (int i = 0; i < all.size(); i++) {
+            ui.show((i + 1) + ". " + all.get(i));
         }
     }
 
-    /** Adds a new not-done task to the end of the collection and saves the list. */
+    /** Adds a new not-done task to the end of the list and saves it. */
     private static void addTask(Task task) {
         tasks.add(task);
-        storage.save(tasks);
+        storage.save(tasks.asList());
         ui.show("Got it. I've added this task:",
                 "  " + task,
                 "Now you have " + tasks.size() + " tasks in the list.");
@@ -160,7 +161,7 @@ public class Baemax {
      */
     private static void updateTaskStatus(String command, boolean completed) throws BaemaxException {
         int taskNumber = parseTaskNumber(command, completed ? "mark" : "unmark");
-        Task task = tasks.get(taskNumber - 1);
+        Task task = tasks.get(taskNumber);
 
         if (completed) {
             task.markAsDone();
@@ -169,15 +170,15 @@ public class Baemax {
             task.markAsUndone();
             ui.show("OK, I've marked this task as not done yet:");
         }
-        storage.save(tasks);
+        storage.save(tasks.asList());
         ui.show("  " + task);
     }
 
     /** Removes a task selected by its one-based list number and saves the list. */
     private static void deleteTask(String command) throws BaemaxException {
         int taskNumber = parseTaskNumber(command, "delete");
-        Task removedTask = tasks.remove(taskNumber - 1);
-        storage.save(tasks);
+        Task removedTask = tasks.remove(taskNumber);
+        storage.save(tasks.asList());
         ui.show("Noted. I've removed this task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list.");
