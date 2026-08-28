@@ -16,6 +16,10 @@ public class Dates {
     /** Format shown back to the user, e.g. {@code Oct 15 2019}. */
     private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy");
 
+    /** Prevents instantiation; this class only exposes static helpers. */
+    private Dates() {
+    }
+
     /**
      * Parses a date written as {@code yyyy-MM-dd}.
      *

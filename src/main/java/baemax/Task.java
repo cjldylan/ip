@@ -5,10 +5,10 @@ package baemax;
  */
 public class Task {
     /** The text entered by the user for this task. */
-    protected String description;
+    private String description;
 
     /** Whether the user has marked this task as done. */
-    protected boolean isDone;
+    private boolean isDone;
 
     /**
      * Creates a new task that starts in the not-done state.
@@ -26,7 +26,7 @@ public class Task {
      * @return {@code X} for a done task or a space for a pending task
      */
     public String getStatusIcon() {
-        return (isDone ? "X" : " "); // mark done task with X
+        return isDone ? "X" : " ";
     }
 
     /** Marks this task as done. */
