@@ -29,6 +29,15 @@ public class Task {
         return (isDone ? "X" : " "); // mark done task with X
     }
 
+    /**
+     * Returns the description text this task was created with.
+     *
+     * @return the task description
+     */
+    public String getDescription() {
+        return description;
+    }
+
     /** Marks this task as done. */
     public void markAsDone() {
         isDone = true;
