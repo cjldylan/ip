@@ -20,4 +20,14 @@ public class Todo extends Task {
     public String toString() {
         return "[T]" + super.toString();
     }
+
+    /**
+     * Prefixes the shared fields with the todo type tag {@code T}.
+     *
+     * @return the save-file representation of this todo
+     */
+    @Override
+    public String toFileFormat() {
+        return "T | " + super.toFileFormat();
+    }
 }
