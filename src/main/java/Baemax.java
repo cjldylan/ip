@@ -66,7 +66,7 @@ public class Baemax {
         } else if (trimmedCommand.equals("delete") || trimmedCommand.startsWith("delete ")) {
             deleteTask(trimmedCommand);
         } else {
-            addTask(parseTask(trimmedCommand));
+            addTask(Parser.parseTask(trimmedCommand));
         }
     }
 
@@ -89,70 +89,6 @@ public class Baemax {
     }
 
     /**
-     * Converts a command into the appropriate task subtype.
-     *
-     * @param command a todo, deadline, or event command
-     * @return the task represented by the command
-     * @throws BaemaxException when the command is unknown or malformed
-     */
-    private static Task parseTask(String command) throws BaemaxException {
-        if (command.equals("todo") || command.startsWith("todo ")) {
-            String description = command.substring("todo".length()).trim();
-            if (description.isEmpty()) {
-                throw new BaemaxException(
-                        "Baemax needs a description for a todo. Try: todo <description>.");
-            }
-            return new Todo(description);
-        }
-
-        if (command.equals("deadline") || command.startsWith("deadline ")) {
-            String details = command.substring("deadline".length()).trim();
-            int byMarker = details.indexOf(" /by ");
-            if (byMarker < 0) {
-                throw new BaemaxException(
-                        "A deadline needs a due date. Try: deadline <description> /by <yyyy-MM-dd>.");
-            }
-
-            String description = details.substring(0, byMarker).trim();
-            String by = details.substring(byMarker + " /by ".length()).trim();
-            if (description.isEmpty() || by.isEmpty()) {
-                throw new BaemaxException(
-                        "A deadline needs both a description and a due date.");
-            }
-            return new Deadline(description, Dates.parse(by));
-        }
-
-        if (command.equals("event") || command.startsWith("event ")) {
-            String details = command.substring("event".length()).trim();
-            int fromMarker = details.indexOf(" /from ");
-            if (fromMarker < 0) {
-                throw new BaemaxException(
-                        "An event needs a start and end date. Try: "
-                        + "event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
-            }
-
-            String description = details.substring(0, fromMarker).trim();
-            String timeRange = details.substring(fromMarker + " /from ".length()).trim();
-            int toMarker = timeRange.indexOf(" /to ");
-            if (toMarker < 0) {
-                throw new BaemaxException(
-                        "An event needs an end date. Add /to <yyyy-MM-dd> after its start date.");
-            }
-
-            String from = timeRange.substring(0, toMarker).trim();
-            String to = timeRange.substring(toMarker + " /to ".length()).trim();
-            if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new BaemaxException(
-                        "An event needs a description, a start date, and an end date.");
-            }
-            return new Event(description, Dates.parse(from), Dates.parse(to));
-        }
-
-        throw new BaemaxException(
-                "Baemax does not know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
-    }
-
-    /**
      * Marks or unmarks a task selected by its one-based list number.
      *
      * @param command a command such as {@code mark 2} or {@code unmark 2}
@@ -160,7 +96,7 @@ public class Baemax {
      * @throws BaemaxException when the command has no valid task number
      */
     private static void updateTaskStatus(String command, boolean completed) throws BaemaxException {
-        int taskNumber = parseTaskNumber(command, completed ? "mark" : "unmark");
+        int taskNumber = Parser.parseTaskNumber(command, completed ? "mark" : "unmark", tasks.size());
         Task task = tasks.get(taskNumber);
 
         if (completed) {
@@ -176,33 +112,11 @@ public class Baemax {
 
     /** Removes a task selected by its one-based list number and saves the list. */
     private static void deleteTask(String command) throws BaemaxException {
-        int taskNumber = parseTaskNumber(command, "delete");
+        int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
         Task removedTask = tasks.remove(taskNumber);
         storage.save(tasks.asList());
         ui.show("Noted. I've removed this task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list.");
-    }
-
-    /** Parses and validates the task number in a task-selection command. */
-    private static int parseTaskNumber(String command, String action) throws BaemaxException {
-        String[] parts = command.split("\\s+");
-        if (parts.length != 2) {
-            throw new BaemaxException(
-                    "Please include a task number, such as " + action + " 2.");
-        }
-
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(parts[1]);
-        } catch (NumberFormatException exception) {
-            throw new BaemaxException("Task numbers look like 1, 2, or 3—not words.");
-        }
-
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new BaemaxException(
-                    "That task number is out of range. Choose a number from 1 to " + tasks.size() + ".");
-        }
-        return taskNumber;
     }
 }
