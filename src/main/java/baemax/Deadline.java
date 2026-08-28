@@ -7,7 +7,7 @@ import java.time.LocalDate;
  */
 public class Deadline extends Task {
     /** The date this task is due. */
-    protected LocalDate by;
+    private final LocalDate by;
 
     /**
      * Creates a pending deadline task.

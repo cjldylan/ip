@@ -7,10 +7,10 @@ import java.time.LocalDate;
  */
 public class Event extends Task {
     /** The date the event starts. */
-    protected LocalDate from;
+    private final LocalDate from;
 
     /** The date the event ends. */
-    protected LocalDate to;
+    private final LocalDate to;
 
     /**
      * Creates a pending event task.

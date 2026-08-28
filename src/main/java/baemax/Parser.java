@@ -7,6 +7,10 @@ package baemax;
  */
 public class Parser {
 
+    /** Prevents instantiation; this class only exposes static helpers. */
+    private Parser() {
+    }
+
     /**
      * Reads an add command ({@code todo}, {@code deadline}, or {@code event})
      * and builds the matching task.

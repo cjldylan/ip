@@ -97,7 +97,11 @@ public class Baemax {
         }
     }
 
-    /** Adds a new not-done task to the end of the list and saves it. */
+    /**
+     * Adds a new not-done task to the end of the list and saves it.
+     *
+     * @param task the task to add
+     */
     private void addTask(Task task) {
         tasks.add(task);
         storage.save(tasks.asList());
@@ -128,7 +132,12 @@ public class Baemax {
         ui.show("  " + task);
     }
 
-    /** Removes a task selected by its one-based list number and saves the list. */
+    /**
+     * Removes a task selected by its one-based list number and saves the list.
+     *
+     * @param command a command such as {@code delete 2}
+     * @throws BaemaxException when the command has no valid task number
+     */
     private void deleteTask(String command) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
         Task removedTask = tasks.remove(taskNumber);
