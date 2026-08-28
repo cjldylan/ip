@@ -114,16 +114,16 @@ public class Baemax {
             int byMarker = details.indexOf(" /by ");
             if (byMarker < 0) {
                 throw new BaemaxException(
-                        "A deadline needs a due time. Try: deadline <description> /by <date or time>.");
+                        "A deadline needs a due date. Try: deadline <description> /by <yyyy-MM-dd>.");
             }
 
             String description = details.substring(0, byMarker).trim();
             String by = details.substring(byMarker + " /by ".length()).trim();
             if (description.isEmpty() || by.isEmpty()) {
                 throw new BaemaxException(
-                        "A deadline needs both a description and a due time.");
+                        "A deadline needs both a description and a due date.");
             }
-            return new Deadline(description, by);
+            return new Deadline(description, Dates.parse(by));
         }
 
         if (command.equals("event") || command.startsWith("event ")) {

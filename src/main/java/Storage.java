@@ -121,9 +121,9 @@ public class Storage {
         }
         if (type.equals("D")) {
             if (parts.length < 4) {
-                throw new BaemaxException("A saved deadline needs a due time.");
+                throw new BaemaxException("A saved deadline needs a due date.");
             }
-            return new Deadline(description, parts[3]);
+            return new Deadline(description, Dates.parse(parts[3]));
         }
         if (type.equals("E")) {
             if (parts.length < 5) {
