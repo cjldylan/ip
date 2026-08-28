@@ -1,3 +1,5 @@
+package baemax;
+
 /**
  * Represents one task stored by the Baemax chatbot.
  */
