@@ -22,6 +22,8 @@ public class Baemax {
                 + "╚════════════════╝\n";
         System.out.println(banner);
 
+        tasks.addAll(storage.load());
+
         System.out.println("Hello, I am Baemax ✨");
         System.out.println("What can I do for you?");
         String line = "__________________________________________";
