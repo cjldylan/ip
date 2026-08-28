@@ -75,4 +75,22 @@ public class TaskList {
     public List<Task> asList() {
         return tasks;
     }
+
+    /**
+     * Returns the tasks whose description contains the given keyword, matched
+     * without regard to case, in list order.
+     *
+     * @param keyword the text to search for
+     * @return the matching tasks, or an empty list when none match
+     */
+    public List<Task> find(String keyword) {
+        String needle = keyword.toLowerCase();
+        List<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(needle)) {
+                matches.add(task);
+            }
+        }
+        return matches;
+    }
 }

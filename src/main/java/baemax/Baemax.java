@@ -72,7 +72,7 @@ public class Baemax {
         String trimmedCommand = command.trim();
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
-                    "Baemax did not catch a command. Try todo, list, mark, delete, or bye.");
+                    "Baemax did not catch a command. Try todo, list, find, mark, delete, or bye.");
         }
 
         if (trimmedCommand.equals("list")) {
@@ -83,6 +83,8 @@ public class Baemax {
             updateTaskStatus(trimmedCommand, false);
         } else if (trimmedCommand.equals("delete") || trimmedCommand.startsWith("delete ")) {
             deleteTask(trimmedCommand);
+        } else if (trimmedCommand.equals("find") || trimmedCommand.startsWith("find ")) {
+            findTasks(trimmedCommand);
         } else {
             addTask(Parser.parseTask(trimmedCommand));
         }
@@ -94,6 +96,26 @@ public class Baemax {
         List<Task> all = tasks.asList();
         for (int i = 0; i < all.size(); i++) {
             ui.show((i + 1) + ". " + all.get(i));
+        }
+    }
+
+    /**
+     * Lists the tasks whose description contains the keyword given after
+     * {@code find}, numbered from one.
+     *
+     * @param command a command such as {@code find book}
+     * @throws BaemaxException when no keyword follows {@code find}
+     */
+    private void findTasks(String command) throws BaemaxException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new BaemaxException("Baemax needs a keyword to search for. Try: find <keyword>.");
+        }
+
+        List<Task> matches = tasks.find(keyword);
+        ui.show("Here are the matching tasks in your list:");
+        for (int i = 0; i < matches.size(); i++) {
+            ui.show((i + 1) + ". " + matches.get(i));
         }
     }
 

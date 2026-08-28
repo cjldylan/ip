@@ -74,4 +74,32 @@ public class TaskListTest {
         assertEquals(1, view.size());
         assertEquals("[T][ ] a", view.get(0).toString());
     }
+
+    @Test
+    public void find_keywordInDescription_returnsMatchesInListOrder() {
+        TaskList list = new TaskList();
+        list.add(new Todo("read book"));
+        list.add(new Todo("buy milk"));
+        list.add(new Todo("return book"));
+
+        List<Task> matches = list.find("book");
+
+        assertEquals(2, matches.size());
+        assertEquals("[T][ ] read book", matches.get(0).toString());
+        assertEquals("[T][ ] return book", matches.get(1).toString());
+    }
+
+    @Test
+    public void find_differentCase_stillMatches() {
+        TaskList list = new TaskList();
+        list.add(new Todo("Read Book"));
+        assertEquals(1, list.find("book").size());
+    }
+
+    @Test
+    public void find_noMatch_returnsEmptyList() {
+        TaskList list = new TaskList();
+        list.add(new Todo("buy milk"));
+        assertEquals(0, list.find("book").size());
+    }
 }
