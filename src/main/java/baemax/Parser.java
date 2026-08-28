@@ -1,3 +1,5 @@
+package baemax;
+
 /**
  * Interprets the raw text a user types into something the chatbot can act on:
  * the task described by an add command, or the task number named by a

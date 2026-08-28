@@ -1,3 +1,5 @@
+package baemax;
+
 /**
  * Represents an error caused by an invalid Baemax command.
  */
