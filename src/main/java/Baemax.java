@@ -1,27 +1,43 @@
 import java.util.List;
 
 /**
- * The Baemax chatbot entry point.
+ * The Baemax chatbot: a command-line to-do assistant that remembers its tasks
+ * between runs. This class wires together the {@link Ui}, {@link Storage}, and
+ * {@link TaskList} collaborators and runs the command loop.
  */
 public class Baemax {
-    /** The tasks the user is tracking. */
-    private static TaskList tasks = new TaskList();
+    /** Reads tasks from and writes tasks to the save file. */
+    private final Storage storage;
 
-    /** Reads and writes {@link #tasks} to disk so they persist between runs. */
-    private static final Storage storage = new Storage("data/baemax.txt");
+    /** The tasks the user is tracking. */
+    private final TaskList tasks;
 
     /** Handles reading commands from and printing responses to the user. */
-    private static final Ui ui = new Ui();
+    private final Ui ui;
 
     /**
-     * Runs the chatbot and responds to user commands until the user says goodbye.
+     * Creates a chatbot that loads from and saves to the given file.
+     *
+     * @param filePath the save file path, relative to the project root
+     */
+    public Baemax(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        tasks = new TaskList(storage.load());
+    }
+
+    /**
+     * Starts the chatbot.
      *
      * @param args command-line arguments, which this chatbot does not use
      */
     public static void main(String[] args) {
-        ui.showWelcome();
+        new Baemax("data/baemax.txt").run();
+    }
 
-        tasks = new TaskList(storage.load());
+    /** Greets the user, then handles commands until the user says goodbye. */
+    public void run() {
+        ui.showWelcome();
 
         while (ui.hasNextCommand()) {
             String command = ui.readCommand();
@@ -50,7 +66,7 @@ public class Baemax {
      * @param command the complete command entered by the user
      * @throws BaemaxException when the command is invalid
      */
-    private static void processCommand(String command) throws BaemaxException {
+    private void processCommand(String command) throws BaemaxException {
         String trimmedCommand = command.trim();
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
@@ -71,7 +87,7 @@ public class Baemax {
     }
 
     /** Displays every stored task with a one-based task number. */
-    private static void displayTasks() {
+    private void displayTasks() {
         ui.show("Here are the tasks in your list:");
         List<Task> all = tasks.asList();
         for (int i = 0; i < all.size(); i++) {
@@ -80,7 +96,7 @@ public class Baemax {
     }
 
     /** Adds a new not-done task to the end of the list and saves it. */
-    private static void addTask(Task task) {
+    private void addTask(Task task) {
         tasks.add(task);
         storage.save(tasks.asList());
         ui.show("Got it. I've added this task:",
@@ -95,7 +111,7 @@ public class Baemax {
      * @param completed whether the selected task should be marked done
      * @throws BaemaxException when the command has no valid task number
      */
-    private static void updateTaskStatus(String command, boolean completed) throws BaemaxException {
+    private void updateTaskStatus(String command, boolean completed) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, completed ? "mark" : "unmark", tasks.size());
         Task task = tasks.get(taskNumber);
 
@@ -111,7 +127,7 @@ public class Baemax {
     }
 
     /** Removes a task selected by its one-based list number and saves the list. */
-    private static void deleteTask(String command) throws BaemaxException {
+    private void deleteTask(String command) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
         Task removedTask = tasks.remove(taskNumber);
         storage.save(tasks.asList());
