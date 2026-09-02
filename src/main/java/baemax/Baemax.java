@@ -140,8 +140,9 @@ public class Baemax {
     private String addTask(Task task) {
         tasks.add(task);
         storage.save(tasks.asList());
-        return "Got it. I've added this task:\n  " + task
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+        return lines("Got it. I've added this task:",
+                "  " + task,
+                "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -165,7 +166,7 @@ public class Baemax {
             heading = "OK, I've marked this task as not done yet:";
         }
         storage.save(tasks.asList());
-        return heading + "\n  " + task;
+        return lines(heading, "  " + task);
     }
 
     /**
@@ -179,8 +180,9 @@ public class Baemax {
         int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
         Task removedTask = tasks.remove(taskNumber);
         storage.save(tasks.asList());
-        return "Noted. I've removed this task:\n  " + removedTask
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+        return lines("Noted. I've removed this task:",
+                "  " + removedTask,
+                "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /** Formats a heading followed by the given tasks, each on its own line and numbered from one. */
@@ -190,5 +192,15 @@ public class Baemax {
             builder.append("\n").append(i + 1).append(". ").append(items.get(i));
         }
         return builder.toString();
+    }
+
+    /**
+     * Joins the given lines with newlines into a single response block.
+     *
+     * @param lines the lines to join, in order
+     * @return the lines separated by {@code \n}
+     */
+    private static String lines(String... lines) {
+        return String.join("\n", lines);
     }
 }
