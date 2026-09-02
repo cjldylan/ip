@@ -1,16 +1,14 @@
 package baemax;
 
-import java.time.LocalDate;
-
 /**
- * A task that spans a start date and an end date.
+ * A task that spans a start point and an end point in time.
  */
 public class Event extends Task {
-    /** The date the event starts. */
-    private final LocalDate from;
+    /** When the event starts. */
+    private final TaskDate from;
 
-    /** The date the event ends. */
-    private final LocalDate to;
+    /** When the event ends. */
+    private final TaskDate to;
 
     /**
      * Creates a pending event task.
@@ -19,7 +17,7 @@ public class Event extends Task {
      * @param from the start date
      * @param to the end date
      */
-    public Event(String description, LocalDate from, LocalDate to) {
+    public Event(String description, TaskDate from, TaskDate to) {
         super(description);
         this.from = from;
         this.to = to;
@@ -32,18 +30,17 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + Dates.format(from) + " to: " + Dates.format(to) + ")";
+        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
     }
 
     /**
      * Prefixes the shared fields with the event type tag {@code E} and appends
-     * the start and end dates in {@code yyyy-MM-dd} form so they can be read
-     * back.
+     * the start and end dates in ISO form so they can be read back.
      *
      * @return the save-file representation of this event
      */
     @Override
     public String toFileFormat() {
-        return "E | " + super.toFileFormat() + " | " + from + " | " + to;
+        return "E | " + super.toFileFormat() + " | " + from.toStorageString() + " | " + to.toStorageString();
     }
 }

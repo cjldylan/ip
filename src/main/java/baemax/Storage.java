@@ -125,13 +125,13 @@ public class Storage {
             if (parts.length < 4) {
                 throw new BaemaxException("A saved deadline needs a due date.");
             }
-            return new Deadline(description, Dates.parse(parts[3]));
+            return new Deadline(description, TaskDate.fromStorage(parts[3]));
         }
         if (type.equals("E")) {
             if (parts.length < 5) {
                 throw new BaemaxException("A saved event needs a start and an end date.");
             }
-            return new Event(description, Dates.parse(parts[3]), Dates.parse(parts[4]));
+            return new Event(description, TaskDate.fromStorage(parts[3]), TaskDate.fromStorage(parts[4]));
         }
         throw new BaemaxException("Unknown task type in the save file: " + type);
     }
