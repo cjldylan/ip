@@ -3,10 +3,10 @@ package baemax;
 import java.util.Scanner;
 
 /**
- * Handles all interaction with the user: reading commands from standard input
- * and printing the chatbot's responses to standard output. Keeping this in one
- * class means the rest of the code never touches {@code System.in} or
- * {@code System.out} directly.
+ * Handles console interaction: reading commands from standard input and
+ * printing framed responses to standard output. Keeping this in one class
+ * means the command logic never touches {@code System.in} or {@code System.out}
+ * directly. The GUI front end does not use this class.
  */
 public class Ui {
     /** Divider printed above and below each response. */
@@ -20,19 +20,12 @@ public class Ui {
         this.scanner = new Scanner(System.in);
     }
 
-    /** Prints the startup banner and greeting. */
-    public void showWelcome() {
+    /** Prints the startup banner. */
+    public void showBanner() {
         String banner = "╔════════════════╗\n"
                 + "║     Baemax     ║\n"
                 + "╚════════════════╝\n";
         System.out.println(banner);
-        System.out.println("Hello, I am Baemax ✨");
-        System.out.println("What can I do for you?");
-    }
-
-    /** Prints the farewell shown when the user says goodbye. */
-    public void showGoodbye() {
-        System.out.println("Bye! Baemax is powering down. Have a lovely day!");
     }
 
     /** Prints the divider that frames each response. */
@@ -59,23 +52,14 @@ public class Ui {
     }
 
     /**
-     * Prints one or more response lines in order.
+     * Prints one or more response blocks in order.
      *
-     * @param lines the lines to print
+     * @param blocks the text blocks to print
      */
-    public void show(String... lines) {
-        for (String line : lines) {
-            System.out.println(line);
+    public void show(String... blocks) {
+        for (String block : blocks) {
+            System.out.println(block);
         }
-    }
-
-    /**
-     * Prints an error message for a command that could not be carried out.
-     *
-     * @param message the explanation to show the user
-     */
-    public void showError(String message) {
-        System.out.println(message);
     }
 
     /** Releases the input resource. */

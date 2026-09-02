@@ -3,9 +3,11 @@ package baemax;
 import java.util.List;
 
 /**
- * The Baemax chatbot: a command-line to-do assistant that remembers its tasks
- * between runs. This class wires together the {@link Ui}, {@link Storage}, and
- * {@link TaskList} collaborators and runs the command loop.
+ * The Baemax chatbot: a to-do assistant that remembers its tasks between runs.
+ * This class wires together the {@link Storage} and {@link TaskList}
+ * collaborators and turns each user command into a response. It can be driven
+ * from the command line via {@link #run()} or from a GUI via
+ * {@link #getResponse(String)}.
  */
 public class Baemax {
     /** Reads tasks from and writes tasks to the save file. */
@@ -14,7 +16,7 @@ public class Baemax {
     /** The tasks the user is tracking. */
     private final TaskList tasks;
 
-    /** Handles reading commands from and printing responses to the user. */
+    /** Handles reading commands from and printing responses to the console. */
     private final Ui ui;
 
     /**
@@ -29,7 +31,7 @@ public class Baemax {
     }
 
     /**
-     * Starts the chatbot.
+     * Starts the chatbot on the command line.
      *
      * @param args command-line arguments, which this chatbot does not use
      */
@@ -37,38 +39,56 @@ public class Baemax {
         new Baemax("data/baemax.txt").run();
     }
 
+    /**
+     * Returns the greeting shown when the chatbot starts.
+     *
+     * @return the welcome message
+     */
+    public String getWelcomeMessage() {
+        return "Hello, I am Baemax ✨\nWhat can I do for you?";
+    }
+
+    /**
+     * Handles one line of user input and returns Baemax's reply.
+     *
+     * @param input the raw command entered by the user
+     * @return the reply to show the user
+     */
+    public String getResponse(String input) {
+        if (input.trim().equals("bye")) {
+            return "Bye! Baemax is powering down. Have a lovely day!";
+        }
+        try {
+            return processCommand(input);
+        } catch (BaemaxException exception) {
+            return exception.getMessage();
+        }
+    }
+
     /** Greets the user, then handles commands until the user says goodbye. */
     public void run() {
-        ui.showWelcome();
+        ui.showBanner();
+        ui.show(getWelcomeMessage());
 
-        while (ui.hasNextCommand()) {
+        boolean isExit = false;
+        while (!isExit && ui.hasNextCommand()) {
             String command = ui.readCommand();
-
-            if (command.equals("bye")) {
-                ui.showLine();
-                ui.showGoodbye();
-                ui.showLine();
-                break;
-            }
-
             ui.showLine();
-            try {
-                processCommand(command);
-            } catch (BaemaxException exception) {
-                ui.showError(exception.getMessage());
-            }
+            ui.show(getResponse(command));
             ui.showLine();
+            isExit = command.trim().equals("bye");
         }
         ui.close();
     }
 
     /**
-     * Executes one non-exit command.
+     * Executes one non-exit command and returns its response text.
      *
      * @param command the complete command entered by the user
+     * @return the response to show the user
      * @throws BaemaxException when the command is invalid
      */
-    private void processCommand(String command) throws BaemaxException {
+    private String processCommand(String command) throws BaemaxException {
         String trimmedCommand = command.trim();
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
@@ -76,60 +96,52 @@ public class Baemax {
         }
 
         if (trimmedCommand.equals("list")) {
-            displayTasks();
+            return displayTasks();
         } else if (trimmedCommand.equals("mark") || trimmedCommand.startsWith("mark ")) {
-            updateTaskStatus(trimmedCommand, true);
+            return updateTaskStatus(trimmedCommand, true);
         } else if (trimmedCommand.equals("unmark") || trimmedCommand.startsWith("unmark ")) {
-            updateTaskStatus(trimmedCommand, false);
+            return updateTaskStatus(trimmedCommand, false);
         } else if (trimmedCommand.equals("delete") || trimmedCommand.startsWith("delete ")) {
-            deleteTask(trimmedCommand);
+            return deleteTask(trimmedCommand);
         } else if (trimmedCommand.equals("find") || trimmedCommand.startsWith("find ")) {
-            findTasks(trimmedCommand);
+            return findTasks(trimmedCommand);
         } else {
-            addTask(Parser.parseTask(trimmedCommand));
+            return addTask(Parser.parseTask(trimmedCommand));
         }
     }
 
-    /** Displays every stored task with a one-based task number. */
-    private void displayTasks() {
-        ui.show("Here are the tasks in your list:");
-        List<Task> all = tasks.asList();
-        for (int i = 0; i < all.size(); i++) {
-            ui.show((i + 1) + ". " + all.get(i));
-        }
+    /** Returns every stored task, numbered from one. */
+    private String displayTasks() {
+        return numberedList("Here are the tasks in your list:", tasks.asList());
     }
 
     /**
-     * Lists the tasks whose description contains the keyword given after
+     * Returns the tasks whose description contains the keyword given after
      * {@code find}, numbered from one.
      *
      * @param command a command such as {@code find book}
+     * @return the matching tasks, numbered
      * @throws BaemaxException when no keyword follows {@code find}
      */
-    private void findTasks(String command) throws BaemaxException {
+    private String findTasks(String command) throws BaemaxException {
         String keyword = command.substring("find".length()).trim();
         if (keyword.isEmpty()) {
             throw new BaemaxException("Baemax needs a keyword to search for. Try: find <keyword>.");
         }
-
-        List<Task> matches = tasks.find(keyword);
-        ui.show("Here are the matching tasks in your list:");
-        for (int i = 0; i < matches.size(); i++) {
-            ui.show((i + 1) + ". " + matches.get(i));
-        }
+        return numberedList("Here are the matching tasks in your list:", tasks.find(keyword));
     }
 
     /**
      * Adds a new not-done task to the end of the list and saves it.
      *
      * @param task the task to add
+     * @return the confirmation message
      */
-    private void addTask(Task task) {
+    private String addTask(Task task) {
         tasks.add(task);
         storage.save(tasks.asList());
-        ui.show("Got it. I've added this task:",
-                "  " + task,
-                "Now you have " + tasks.size() + " tasks in the list.");
+        return "Got it. I've added this task:\n  " + task
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 
     /**
@@ -137,35 +149,46 @@ public class Baemax {
      *
      * @param command a command such as {@code mark 2} or {@code unmark 2}
      * @param completed whether the selected task should be marked done
+     * @return the confirmation message
      * @throws BaemaxException when the command has no valid task number
      */
-    private void updateTaskStatus(String command, boolean completed) throws BaemaxException {
+    private String updateTaskStatus(String command, boolean completed) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, completed ? "mark" : "unmark", tasks.size());
         Task task = tasks.get(taskNumber);
 
+        String heading;
         if (completed) {
             task.markAsDone();
-            ui.show("Nice! I've marked this task as done:");
+            heading = "Nice! I've marked this task as done:";
         } else {
             task.markAsUndone();
-            ui.show("OK, I've marked this task as not done yet:");
+            heading = "OK, I've marked this task as not done yet:";
         }
         storage.save(tasks.asList());
-        ui.show("  " + task);
+        return heading + "\n  " + task;
     }
 
     /**
      * Removes a task selected by its one-based list number and saves the list.
      *
      * @param command a command such as {@code delete 2}
+     * @return the confirmation message
      * @throws BaemaxException when the command has no valid task number
      */
-    private void deleteTask(String command) throws BaemaxException {
+    private String deleteTask(String command) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
         Task removedTask = tasks.remove(taskNumber);
         storage.save(tasks.asList());
-        ui.show("Noted. I've removed this task:",
-                "  " + removedTask,
-                "Now you have " + tasks.size() + " tasks in the list.");
+        return "Noted. I've removed this task:\n  " + removedTask
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
+    }
+
+    /** Formats a heading followed by the given tasks, each on its own line and numbered from one. */
+    private static String numberedList(String heading, List<Task> items) {
+        StringBuilder builder = new StringBuilder(heading);
+        for (int i = 0; i < items.size(); i++) {
+            builder.append("\n").append(i + 1).append(". ").append(items.get(i));
+        }
+        return builder.toString();
     }
 }
