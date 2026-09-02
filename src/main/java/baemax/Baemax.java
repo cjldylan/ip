@@ -45,7 +45,7 @@ public class Baemax {
      * @return the welcome message
      */
     public String getWelcomeMessage() {
-        return "Hello, I am Baemax ✨\nWhat can I do for you?";
+        return "Hello, I am Baemax!\nWhat can I do for you?";
     }
 
     /**
