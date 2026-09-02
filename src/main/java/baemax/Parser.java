@@ -35,7 +35,7 @@ public class Parser {
             int byMarker = details.indexOf(" /by ");
             if (byMarker < 0) {
                 throw new BaemaxException(
-                        "A deadline needs a due date. Try: deadline <description> /by <yyyy-MM-dd>.");
+                        "A deadline needs a due date. Try: deadline <description> /by <date> [time].");
             }
 
             String description = details.substring(0, byMarker).trim();
@@ -44,7 +44,7 @@ public class Parser {
                 throw new BaemaxException(
                         "A deadline needs both a description and a due date.");
             }
-            return new Deadline(description, Dates.parse(by));
+            return new Deadline(description, TaskDate.parse(by));
         }
 
         if (command.equals("event") || command.startsWith("event ")) {
@@ -53,7 +53,7 @@ public class Parser {
             if (fromMarker < 0) {
                 throw new BaemaxException(
                         "An event needs a start and end date. Try: "
-                        + "event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
+                        + "event <description> /from <date> [time] /to <date> [time].");
             }
 
             String description = details.substring(0, fromMarker).trim();
@@ -61,7 +61,7 @@ public class Parser {
             int toMarker = timeRange.indexOf(" /to ");
             if (toMarker < 0) {
                 throw new BaemaxException(
-                        "An event needs an end date. Add /to <yyyy-MM-dd> after its start date.");
+                        "An event needs an end date. Add /to <date> [time] after its start date.");
             }
 
             String from = timeRange.substring(0, toMarker).trim();
@@ -70,7 +70,7 @@ public class Parser {
                 throw new BaemaxException(
                         "An event needs a description, a start date, and an end date.");
             }
-            return new Event(description, Dates.parse(from), Dates.parse(to));
+            return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
         }
 
         throw new BaemaxException(

@@ -1,21 +1,19 @@
 package baemax;
 
-import java.time.LocalDate;
-
 /**
- * A task that should be completed by a specified date.
+ * A task that should be completed by a specified date (and optionally a time).
  */
 public class Deadline extends Task {
-    /** The date this task is due. */
-    private final LocalDate by;
+    /** When this task is due. */
+    private final TaskDate by;
 
     /**
      * Creates a pending deadline task.
      *
      * @param description the deadline description
-     * @param by the date the task is due
+     * @param by when the task is due
      */
-    public Deadline(String description, LocalDate by) {
+    public Deadline(String description, TaskDate by) {
         super(description);
         this.by = by;
     }
@@ -27,17 +25,17 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + Dates.format(by) + ")";
+        return "[D]" + super.toString() + " (by: " + by + ")";
     }
 
     /**
      * Prefixes the shared fields with the deadline type tag {@code D} and
-     * appends the due date in {@code yyyy-MM-dd} form so it can be read back.
+     * appends the due date in ISO form so it can be read back.
      *
      * @return the save-file representation of this deadline
      */
     @Override
     public String toFileFormat() {
-        return "D | " + super.toFileFormat() + " | " + by;
+        return "D | " + super.toFileFormat() + " | " + by.toStorageString();
     }
 }
