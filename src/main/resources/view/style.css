@@ -1,22 +1,22 @@
-/* Baemax GUI theme: cyberpunk - deep blue-black with neon cyan / magenta. */
+/* Baemax GUI theme: cyberpunk - near-black with a single hot-pink neon. */
 
 .root {
     -fx-font-family: "VT323", "Courier New", monospace;
     -fx-font-size: 19px;
-    -fx-background-color: #0a0e17;
+    -fx-background-color: #0c0710;
 }
 
 /* ---- chat area ---- */
 
 .scroll-pane {
-    -fx-background: #0b111c;
+    -fx-background: #130a12;
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: #0b111c;
+    -fx-background-color: #130a12;
 }
 
 .scroll-pane .scroll-bar:vertical {
@@ -24,7 +24,7 @@
 }
 
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #1f6f8b;
+    -fx-background-color: #7a2255;
     -fx-background-radius: 6;
 }
 
@@ -39,7 +39,7 @@
 #dialogContainer {
     -fx-padding: 14;
     -fx-spacing: 12;
-    -fx-background-color: #0b111c;
+    -fx-background-color: #130a12;
 }
 
 /* ---- chat bubbles ---- */
@@ -49,61 +49,62 @@
 }
 
 .dialog-box .bubble {
-    -fx-background-color: #0f1c2e;
+    -fx-background-color: #1c0f18;
     -fx-background-radius: 4;
-    -fx-border-color: #00e5ff;
+    -fx-border-color: #ff2d95;
     -fx-border-radius: 4;
     -fx-border-width: 1.5;
     -fx-padding: 9 13 9 13;
-    -fx-text-fill: #a9ecff;
+    -fx-text-fill: #ffb0d8;
     -fx-font-size: 19px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.35), 10, 0.3, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.4), 10, 0.3, 0, 0);
 }
 
+/* Baemax's replies: filled hot pink with dark text. */
 .dialog-box.reply .bubble {
-    -fx-background-color: #1c1030;
-    -fx-border-color: #ff2e97;
-    -fx-text-fill: #ffb3dd;
-    -fx-effect: dropshadow(gaussian, rgba(255, 46, 151, 0.35), 10, 0.3, 0, 0);
+    -fx-background-color: #ff2d95;
+    -fx-border-color: #ff5cae;
+    -fx-text-fill: #12060d;
+    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.55), 12, 0.35, 0, 0);
 }
 
 /* ---- input row ---- */
 
 .text-field {
-    -fx-background-color: #0c1522;
+    -fx-background-color: #150a12;
     -fx-background-radius: 4;
-    -fx-border-color: #1f6f8b;
+    -fx-border-color: #7a2255;
     -fx-border-radius: 4;
     -fx-border-width: 1.5;
-    -fx-text-fill: #c7f5ff;
-    -fx-prompt-text-fill: #3f6f80;
+    -fx-text-fill: #ffcfe6;
+    -fx-prompt-text-fill: #8a4f6f;
     -fx-font-size: 18px;
     -fx-padding: 6 12 6 12;
 }
 
 .text-field:focused {
-    -fx-border-color: #00e5ff;
-    -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.45), 8, 0.3, 0, 0);
+    -fx-border-color: #ff2d95;
+    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.5), 8, 0.3, 0, 0);
 }
 
 .button {
     -fx-background-color: transparent;
     -fx-background-radius: 4;
-    -fx-border-color: #00e5ff;
+    -fx-border-color: #ff2d95;
     -fx-border-radius: 4;
     -fx-border-width: 1.5;
-    -fx-text-fill: #00e5ff;
+    -fx-text-fill: #ff2d95;
     -fx-font-size: 18px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.3), 6, 0.2, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.35), 6, 0.2, 0, 0);
 }
 
 .button:hover {
-    -fx-background-color: #00e5ff;
-    -fx-text-fill: #05141c;
+    -fx-background-color: #ff2d95;
+    -fx-text-fill: #12060d;
 }
 
 .button:pressed {
-    -fx-background-color: #00b8cc;
-    -fx-text-fill: #05141c;
+    -fx-background-color: #d81f7c;
+    -fx-text-fill: #12060d;
 }
