@@ -1,22 +1,22 @@
-/* Baemax GUI theme: sage / matcha green, with a pixel font. */
+/* Baemax GUI theme: deep matcha / olive green, with a pixel font. */
 
 .root {
     -fx-font-family: "VT323", "Courier New", monospace;
     -fx-font-size: 18px;
-    -fx-background-color: #e3e9d8;
+    -fx-background-color: #3f4a34;
 }
 
 /* ---- chat area ---- */
 
 .scroll-pane {
-    -fx-background: #eef1e6;
+    -fx-background: #4a5640;
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: #eef1e6;
+    -fx-background-color: #4a5640;
 }
 
 .scroll-pane .scroll-bar:vertical {
@@ -24,7 +24,7 @@
 }
 
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #b6c79a;
+    -fx-background-color: #7e9060;
     -fx-background-radius: 6;
 }
 
@@ -39,7 +39,7 @@
 #dialogContainer {
     -fx-padding: 12;
     -fx-spacing: 10;
-    -fx-background-color: #eef1e6;
+    -fx-background-color: #4a5640;
 }
 
 /* ---- chat bubbles ---- */
@@ -49,47 +49,48 @@
 }
 
 .dialog-box .bubble {
-    -fx-background-color: #d6e0c4;
+    -fx-background-color: #c6d1a9;
     -fx-background-radius: 14;
     -fx-padding: 9 13 9 13;
-    -fx-text-fill: #3e4a2c;
+    -fx-text-fill: #2c3520;
     -fx-font-size: 18px;
 }
 
 .dialog-box.reply .bubble {
-    -fx-background-color: #b9cba4;
+    -fx-background-color: #8ba066;
+    -fx-text-fill: #232d17;
 }
 
 /* ---- input row ---- */
 
 .text-field {
-    -fx-background-color: #f5f7ee;
+    -fx-background-color: #dde3cd;
     -fx-background-radius: 12;
-    -fx-border-color: #a9ba8c;
+    -fx-border-color: #6f8250;
     -fx-border-radius: 12;
     -fx-border-width: 1.5;
-    -fx-text-fill: #3e4a2c;
-    -fx-prompt-text-fill: #8a9a6f;
+    -fx-text-fill: #2c3520;
+    -fx-prompt-text-fill: #7d9060;
     -fx-font-size: 17px;
     -fx-padding: 6 12 6 12;
 }
 
 .text-field:focused {
-    -fx-border-color: #7d9b6a;
+    -fx-border-color: #95ab6a;
 }
 
 .button {
-    -fx-background-color: #8a9a5b;
+    -fx-background-color: #6f8250;
     -fx-background-radius: 12;
-    -fx-text-fill: #f5f7ee;
+    -fx-text-fill: #f2f4e6;
     -fx-font-size: 17px;
     -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: #7a8a4d;
+    -fx-background-color: #5e7042;
 }
 
 .button:pressed {
-    -fx-background-color: #6b7a41;
+    -fx-background-color: #4f5f38;
 }
