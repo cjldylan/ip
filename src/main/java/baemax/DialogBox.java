@@ -37,6 +37,7 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(image);
+        getStyleClass().add("dialog-box");
 
         // Clip the square avatar to a circle.
         double radius = displayPicture.getFitWidth() / 2;
@@ -49,6 +50,7 @@ public class DialogBox extends HBox {
         Collections.reverse(nodes);
         getChildren().setAll(nodes);
         setAlignment(Pos.TOP_LEFT);
+        getStyleClass().add("reply");
     }
 
     /**

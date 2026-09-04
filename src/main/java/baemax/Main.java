@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -18,9 +19,12 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            Font.loadFont(Main.class.getResourceAsStream("/fonts/VT323-Regular.ttf"), 18);
+
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = fxmlLoader.load();
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(Main.class.getResource("/view/style.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("Baemax");
             stage.setMinHeight(220.0);
