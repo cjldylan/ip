@@ -20,6 +20,13 @@ public class Baemax {
     private final Ui ui;
 
     /**
+     * A copy of the tasks as they were just before the most recent
+     * list-changing command, or {@code null} when there is nothing to undo
+     * (either nothing has changed yet, or the last change was already undone).
+     */
+    private List<Task> undoSnapshot;
+
+    /**
      * Creates a chatbot that loads from and saves to the given file.
      *
      * @param filePath the save file path, relative to the project root
@@ -92,7 +99,7 @@ public class Baemax {
         String trimmedCommand = command.trim();
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
-                    "Baemax did not catch a command. Try todo, list, find, mark, delete, or bye.");
+                    "Baemax did not catch a command. Try todo, list, find, mark, delete, undo, or bye.");
         }
 
         if (trimmedCommand.equals("list")) {
@@ -105,6 +112,8 @@ public class Baemax {
             return deleteTask(trimmedCommand);
         } else if (trimmedCommand.equals("find") || trimmedCommand.startsWith("find ")) {
             return findTasks(trimmedCommand);
+        } else if (trimmedCommand.equals("undo")) {
+            return undo();
         } else {
             return addTask(Parser.parseTask(trimmedCommand));
         }
@@ -138,6 +147,7 @@ public class Baemax {
      * @return the confirmation message
      */
     private String addTask(Task task) {
+        rememberForUndo();
         tasks.add(task);
         storage.save(tasks.asList());
         return lines("Got it. I've added this task:",
@@ -158,6 +168,7 @@ public class Baemax {
         // Parser.parseTaskNumber already rejects anything outside [1, tasks.size()];
         // this only guards against Parser itself regressing that contract.
         assert taskNumber >= 1 && taskNumber <= tasks.size() : "parseTaskNumber returned an out-of-range number";
+        rememberForUndo();
         Task task = tasks.get(taskNumber);
 
         String heading;
@@ -183,11 +194,39 @@ public class Baemax {
         int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
         // Same contract as updateTaskStatus: Parser guarantees the range already.
         assert taskNumber >= 1 && taskNumber <= tasks.size() : "parseTaskNumber returned an out-of-range number";
+        rememberForUndo();
         Task removedTask = tasks.remove(taskNumber);
         storage.save(tasks.asList());
         return lines("Noted. I've removed this task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Restores the tasks to how they were just before the most recent
+     * add, delete, mark, or unmark, and saves that restored state.
+     *
+     * @return the confirmation message, including the restored list
+     * @throws BaemaxException when there is nothing to undo
+     */
+    private String undo() throws BaemaxException {
+        if (undoSnapshot == null) {
+            throw new BaemaxException("There's nothing to undo yet.");
+        }
+        tasks.restoreFrom(undoSnapshot);
+        storage.save(tasks.asList());
+        undoSnapshot = null;
+        return numberedList("Undone! Here are the tasks in your list now:", tasks.asList());
+    }
+
+    /**
+     * Snapshots the current tasks so a later {@link #undo()} can restore
+     * exactly this state. Called just before a list-changing command takes
+     * effect, once any validation that could still fail has passed - a
+     * command that ends up throwing never overwrites a usable snapshot.
+     */
+    private void rememberForUndo() {
+        undoSnapshot = tasks.snapshot();
     }
 
     /** Formats a heading followed by the given tasks, each on its own line and numbered from one. */

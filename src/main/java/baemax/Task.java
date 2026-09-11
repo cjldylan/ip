@@ -59,6 +59,31 @@ public class Task {
     }
 
     /**
+     * Returns an independent copy of this task, for snapshotting the task
+     * list before a command that might need to be undone. Subtypes override
+     * this to return a copy of their own concrete type.
+     *
+     * @return a new task with the same description and done state
+     */
+    public Task copy() {
+        Task copy = new Task(description);
+        copyDoneStatusInto(copy);
+        return copy;
+    }
+
+    /**
+     * Applies this task's done status to another task, for use by subtype
+     * {@code copy()} overrides.
+     *
+     * @param target the task to update
+     */
+    protected final void copyDoneStatusInto(Task target) {
+        if (isDone) {
+            target.markAsDone();
+        }
+    }
+
+    /**
      * Encodes the fields shared by every task for the save file as
      * {@code <status> | <description>}, where status is {@code 1} when the
      * task is done and {@code 0} otherwise. Subtypes prepend a type tag and
