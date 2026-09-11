@@ -46,6 +46,9 @@ public class DialogBox extends HBox {
 
     /** Flips the bubble so the avatar is on the left and the text on the right. */
     private void flip() {
+        // DialogBox.fxml always builds exactly the label and the image view;
+        // reversing anything else would silently scramble the layout.
+        assert getChildren().size() == 2 : "expected exactly the label and the image view";
         ObservableList<Node> nodes = FXCollections.observableArrayList(this.getChildren());
         Collections.reverse(nodes);
         getChildren().setAll(nodes);

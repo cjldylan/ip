@@ -155,6 +155,9 @@ public class Baemax {
      */
     private String updateTaskStatus(String command, boolean completed) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, completed ? "mark" : "unmark", tasks.size());
+        // Parser.parseTaskNumber already rejects anything outside [1, tasks.size()];
+        // this only guards against Parser itself regressing that contract.
+        assert taskNumber >= 1 && taskNumber <= tasks.size() : "parseTaskNumber returned an out-of-range number";
         Task task = tasks.get(taskNumber);
 
         String heading;
@@ -178,6 +181,8 @@ public class Baemax {
      */
     private String deleteTask(String command) throws BaemaxException {
         int taskNumber = Parser.parseTaskNumber(command, "delete", tasks.size());
+        // Same contract as updateTaskStatus: Parser guarantees the range already.
+        assert taskNumber >= 1 && taskNumber <= tasks.size() : "parseTaskNumber returned an out-of-range number";
         Task removedTask = tasks.remove(taskNumber);
         storage.save(tasks.asList());
         return lines("Noted. I've removed this task:",
