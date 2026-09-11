@@ -1,22 +1,23 @@
-/* Baemax GUI theme: cyberpunk - near-black with a single hot-pink neon. */
+/* Baemax GUI theme: chunky pastel "game UI" in a darker dusty blue. */
 
 .root {
-    -fx-font-family: "VT323", "Courier New", monospace;
-    -fx-font-size: 19px;
-    -fx-background-color: #0c0710;
+    -fx-font-family: "Baloo 2", "Verdana", sans-serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-color: #5f93ab;
 }
 
 /* ---- chat area ---- */
 
 .scroll-pane {
-    -fx-background: #130a12;
+    -fx-background: #bfe0e8;
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: #130a12;
+    -fx-background-color: #bfe0e8;
 }
 
 .scroll-pane .scroll-bar:vertical {
@@ -24,8 +25,8 @@
 }
 
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #7a2255;
-    -fx-background-radius: 6;
+    -fx-background-color: #3f7f96;
+    -fx-background-radius: 8;
 }
 
 .scroll-pane .scroll-bar .increment-arrow,
@@ -39,7 +40,7 @@
 #dialogContainer {
     -fx-padding: 14;
     -fx-spacing: 12;
-    -fx-background-color: #130a12;
+    -fx-background-color: #bfe0e8;
 }
 
 /* ---- chat bubbles ---- */
@@ -49,62 +50,59 @@
 }
 
 .dialog-box .bubble {
-    -fx-background-color: #1c0f18;
-    -fx-background-radius: 4;
-    -fx-border-color: #ff2d95;
-    -fx-border-radius: 4;
-    -fx-border-width: 1.5;
-    -fx-padding: 9 13 9 13;
-    -fx-text-fill: #ffb0d8;
-    -fx-font-size: 19px;
-    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.4), 10, 0.3, 0, 0);
+    -fx-background-color: #8fc3d4;
+    -fx-background-radius: 16;
+    -fx-border-color: #2c5f70;
+    -fx-border-radius: 16;
+    -fx-border-width: 2.5;
+    -fx-padding: 9 14 9 14;
+    -fx-text-fill: #1c3944;
+    -fx-font-size: 16px;
 }
 
-/* Baemax's replies: filled hot pink with dark text. */
+/* Baemax's replies: filled with the deeper blue and pale text. */
 .dialog-box.reply .bubble {
-    -fx-background-color: #ff2d95;
-    -fx-border-color: #ff5cae;
-    -fx-text-fill: #12060d;
-    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.55), 12, 0.35, 0, 0);
+    -fx-background-color: #3f7f96;
+    -fx-border-color: #1f4a56;
+    -fx-text-fill: #eaf6f8;
 }
 
 /* ---- input row ---- */
 
 .text-field {
-    -fx-background-color: #150a12;
-    -fx-background-radius: 4;
-    -fx-border-color: #7a2255;
-    -fx-border-radius: 4;
-    -fx-border-width: 1.5;
-    -fx-text-fill: #ffcfe6;
-    -fx-prompt-text-fill: #8a4f6f;
-    -fx-font-size: 18px;
-    -fx-padding: 6 12 6 12;
+    -fx-background-color: #eaf6f8;
+    -fx-background-radius: 16;
+    -fx-border-color: #2c5f70;
+    -fx-border-radius: 16;
+    -fx-border-width: 2.5;
+    -fx-text-fill: #1c3944;
+    -fx-prompt-text-fill: #6d99a8;
+    -fx-font-size: 16px;
+    -fx-padding: 6 14 6 14;
 }
 
 .text-field:focused {
-    -fx-border-color: #ff2d95;
-    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.5), 8, 0.3, 0, 0);
+    -fx-border-color: #1f4a56;
 }
 
+/* Chunky "3D" button: a thicker, darker bottom edge to fake depth. */
 .button {
-    -fx-background-color: transparent;
-    -fx-background-radius: 4;
-    -fx-border-color: #ff2d95;
-    -fx-border-radius: 4;
-    -fx-border-width: 1.5;
-    -fx-text-fill: #ff2d95;
-    -fx-font-size: 18px;
+    -fx-background-color: #3f7f96;
+    -fx-background-radius: 14;
+    -fx-border-color: #1f4a56 #1f4a56 #142f37 #1f4a56;
+    -fx-border-radius: 14;
+    -fx-border-width: 2 2 5 2;
+    -fx-text-fill: #eaf6f8;
+    -fx-font-size: 16px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(255, 45, 149, 0.35), 6, 0.2, 0, 0);
 }
 
 .button:hover {
-    -fx-background-color: #ff2d95;
-    -fx-text-fill: #12060d;
+    -fx-background-color: #4a91aa;
 }
 
 .button:pressed {
-    -fx-background-color: #d81f7c;
-    -fx-text-fill: #12060d;
+    -fx-background-color: #326b7d;
+    -fx-border-width: 2 2 2 2;
+    -fx-translate-y: 2;
 }
