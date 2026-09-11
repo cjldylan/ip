@@ -22,60 +22,83 @@ public class Parser {
      */
     public static Task parseTask(String command) throws BaemaxException {
         if (command.equals("todo") || command.startsWith("todo ")) {
-            String description = command.substring("todo".length()).trim();
-            if (description.isEmpty()) {
-                throw new BaemaxException(
-                        "Baemax needs a description for a todo. Try: todo <description>.");
-            }
-            return new Todo(description);
+            return parseTodo(command);
         }
-
         if (command.equals("deadline") || command.startsWith("deadline ")) {
-            String details = command.substring("deadline".length()).trim();
-            int byMarker = details.indexOf(" /by ");
-            if (byMarker < 0) {
-                throw new BaemaxException(
-                        "A deadline needs a due date. Try: deadline <description> /by <date> [time].");
-            }
-
-            String description = details.substring(0, byMarker).trim();
-            String by = details.substring(byMarker + " /by ".length()).trim();
-            if (description.isEmpty() || by.isEmpty()) {
-                throw new BaemaxException(
-                        "A deadline needs both a description and a due date.");
-            }
-            return new Deadline(description, TaskDate.parse(by));
+            return parseDeadline(command);
         }
-
         if (command.equals("event") || command.startsWith("event ")) {
-            String details = command.substring("event".length()).trim();
-            int fromMarker = details.indexOf(" /from ");
-            if (fromMarker < 0) {
-                throw new BaemaxException(
-                        "An event needs a start and end date. Try: "
-                        + "event <description> /from <date> [time] /to <date> [time].");
-            }
-
-            String description = details.substring(0, fromMarker).trim();
-            String timeRange = details.substring(fromMarker + " /from ".length()).trim();
-            int toMarker = timeRange.indexOf(" /to ");
-            if (toMarker < 0) {
-                throw new BaemaxException(
-                        "An event needs an end date. Add /to <date> [time] after its start date.");
-            }
-
-            String from = timeRange.substring(0, toMarker).trim();
-            String to = timeRange.substring(toMarker + " /to ".length()).trim();
-            if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new BaemaxException(
-                        "An event needs a description, a start date, and an end date.");
-            }
-            return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
+            return parseEvent(command);
         }
-
         throw new BaemaxException(
                 "Baemax does not know that command yet. "
                 + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
+    }
+
+    /**
+     * Reads a {@code todo <description>} command.
+     *
+     * @param command the full command text
+     * @return the described todo
+     * @throws BaemaxException when the description is missing
+     */
+    private static Task parseTodo(String command) throws BaemaxException {
+        String description = command.substring("todo".length()).trim();
+        requireNonEmpty(description, "Baemax needs a description for a todo. Try: todo <description>.");
+        return new Todo(description);
+    }
+
+    /**
+     * Reads a {@code deadline <description> /by <date> [time]} command.
+     *
+     * @param command the full command text
+     * @return the described deadline
+     * @throws BaemaxException when the due date or description is missing
+     */
+    private static Task parseDeadline(String command) throws BaemaxException {
+        String details = command.substring("deadline".length()).trim();
+        int byMarker = details.indexOf(" /by ");
+        if (byMarker < 0) {
+            throw new BaemaxException(
+                    "A deadline needs a due date. Try: deadline <description> /by <date> [time].");
+        }
+
+        String description = details.substring(0, byMarker).trim();
+        String by = details.substring(byMarker + " /by ".length()).trim();
+        requireNonEmpty(description, "A deadline needs both a description and a due date.");
+        requireNonEmpty(by, "A deadline needs both a description and a due date.");
+        return new Deadline(description, TaskDate.parse(by));
+    }
+
+    /**
+     * Reads an {@code event <description> /from <date> [time] /to <date> [time]} command.
+     *
+     * @param command the full command text
+     * @return the described event
+     * @throws BaemaxException when the description, start date, or end date is missing
+     */
+    private static Task parseEvent(String command) throws BaemaxException {
+        String details = command.substring("event".length()).trim();
+        int fromMarker = details.indexOf(" /from ");
+        if (fromMarker < 0) {
+            throw new BaemaxException(
+                    "An event needs a start and end date. Try: "
+                    + "event <description> /from <date> [time] /to <date> [time].");
+        }
+
+        String description = details.substring(0, fromMarker).trim();
+        String timeRange = details.substring(fromMarker + " /from ".length()).trim();
+        int toMarker = timeRange.indexOf(" /to ");
+        if (toMarker < 0) {
+            throw new BaemaxException("An event needs an end date. Add /to <date> [time] after its start date.");
+        }
+
+        String from = timeRange.substring(0, toMarker).trim();
+        String to = timeRange.substring(toMarker + " /to ".length()).trim();
+        requireNonEmpty(description, "An event needs a description, a start date, and an end date.");
+        requireNonEmpty(from, "An event needs a description, a start date, and an end date.");
+        requireNonEmpty(to, "An event needs a description, a start date, and an end date.");
+        return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
     }
 
     /**
@@ -107,5 +130,18 @@ public class Parser {
                     "That task number is out of range. Choose a number from 1 to " + taskCount + ".");
         }
         return taskNumber;
+    }
+
+    /**
+     * Rejects a blank field parsed out of a command.
+     *
+     * @param value the field to check
+     * @param errorMessage the message to raise when it is blank
+     * @throws BaemaxException when {@code value} is empty
+     */
+    private static void requireNonEmpty(String value, String errorMessage) throws BaemaxException {
+        if (value.isEmpty()) {
+            throw new BaemaxException(errorMessage);
+        }
     }
 }
