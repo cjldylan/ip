@@ -19,7 +19,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            Font.loadFont(Main.class.getResourceAsStream("/fonts/Baloo2.ttf"), 16);
+            Font.loadFont(Main.class.getResourceAsStream("/fonts/VT323-Regular.ttf"), 20);
+            Font.loadFont(Main.class.getResourceAsStream("/fonts/PressStart2P-Regular.ttf"), 11);
 
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = fxmlLoader.load();

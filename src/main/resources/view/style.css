@@ -1,23 +1,24 @@
-/* Baemax GUI theme: chunky pastel "game UI" in a darker dusty blue. */
+/* Baemax GUI theme: icy-blue pixel-game UI - flat faces, thick navy
+   outlines, a darker "shelf" along the bottom edge, and hard (unblurred)
+   drop shadows, the way retro game-UI buttons are usually drawn. */
 
 .root {
-    -fx-font-family: "Baloo 2", "Verdana", sans-serif;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-background-color: #5f93ab;
+    -fx-font-family: "VT323", "Courier New", monospace;
+    -fx-font-size: 20px;
+    -fx-background-color: #c9def2;
 }
 
 /* ---- chat area ---- */
 
 .scroll-pane {
-    -fx-background: #bfe0e8;
+    -fx-background: #c9def2;
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: #bfe0e8;
+    -fx-background-color: #c9def2;
 }
 
 .scroll-pane .scroll-bar:vertical {
@@ -25,8 +26,8 @@
 }
 
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #3f7f96;
-    -fx-background-radius: 8;
+    -fx-background-color: #33517a;
+    -fx-background-radius: 6;
 }
 
 .scroll-pane .scroll-bar .increment-arrow,
@@ -38,71 +39,80 @@
 }
 
 #dialogContainer {
-    -fx-padding: 14;
-    -fx-spacing: 12;
-    -fx-background-color: #bfe0e8;
+    -fx-padding: 16;
+    -fx-spacing: 14;
+    -fx-background-color: #c9def2;
 }
 
-/* ---- chat bubbles ---- */
+/* ---- chat bubbles: flat face + thick bottom "shelf" + hard shadow ---- */
 
 .dialog-box {
     -fx-spacing: 8;
 }
 
 .dialog-box .bubble {
-    -fx-background-color: #8fc3d4;
-    -fx-background-radius: 16;
-    -fx-border-color: #2c5f70;
-    -fx-border-radius: 16;
-    -fx-border-width: 2.5;
-    -fx-padding: 9 14 9 14;
-    -fx-text-fill: #1c3944;
-    -fx-font-size: 16px;
+    -fx-background-color: #8fb4d6;
+    -fx-background-radius: 14;
+    -fx-border-color: #33517a;
+    -fx-border-radius: 14;
+    -fx-border-width: 2.5 2.5 7 2.5;
+    -fx-padding: 8 14 8 14;
+    -fx-text-fill: #f5f9ff;
+    -fx-font-size: 20px;
+    -fx-effect: dropshadow(one-pass-box, #1c3350, 0, 1.0, 5, 5);
 }
 
-/* Baemax's replies: filled with the deeper blue and pale text. */
+/* Baemax's replies: a darker face so the two speakers stay distinct. */
 .dialog-box.reply .bubble {
-    -fx-background-color: #3f7f96;
-    -fx-border-color: #1f4a56;
-    -fx-text-fill: #eaf6f8;
+    -fx-background-color: #5b84ab;
+    -fx-border-color: #243c5c;
+    -fx-border-width: 2.5 2.5 7 2.5;
+    -fx-text-fill: #f5f9ff;
+    -fx-effect: dropshadow(one-pass-box, #12233a, 0, 1.0, 5, 5);
 }
 
 /* ---- input row ---- */
 
 .text-field {
-    -fx-background-color: #eaf6f8;
-    -fx-background-radius: 16;
-    -fx-border-color: #2c5f70;
-    -fx-border-radius: 16;
+    -fx-background-color: #e4eef9;
+    -fx-background-radius: 12;
+    -fx-border-color: #33517a;
+    -fx-border-radius: 12;
     -fx-border-width: 2.5;
-    -fx-text-fill: #1c3944;
-    -fx-prompt-text-fill: #6d99a8;
-    -fx-font-size: 16px;
+    -fx-text-fill: #1c3350;
+    -fx-prompt-text-fill: #7a95b8;
+    -fx-font-size: 19px;
     -fx-padding: 6 14 6 14;
+    -fx-effect: dropshadow(one-pass-box, #1c3350, 0, 1.0, 4, 4);
 }
 
 .text-field:focused {
-    -fx-border-color: #1f4a56;
+    -fx-border-color: #1c3350;
 }
 
-/* Chunky "3D" button: a thicker, darker bottom edge to fake depth. */
+/* Chunky pixel-game button: blocky label font, thick bottom shelf, hard shadow. */
 .button {
-    -fx-background-color: #3f7f96;
-    -fx-background-radius: 14;
-    -fx-border-color: #1f4a56 #1f4a56 #142f37 #1f4a56;
-    -fx-border-radius: 14;
-    -fx-border-width: 2 2 5 2;
-    -fx-text-fill: #eaf6f8;
-    -fx-font-size: 16px;
+    -fx-background-color: #a7c8e6;
+    -fx-background-radius: 12;
+    -fx-border-color: #33517a;
+    -fx-border-radius: 12;
+    -fx-border-width: 2.5 2.5 7 2.5;
+    -fx-text-fill: #1c3350;
+    -fx-font-family: "Press Start 2P";
+    -fx-font-size: 11px;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, #1c3350, 0, 1.0, 5, 5);
 }
 
 .button:hover {
-    -fx-background-color: #4a91aa;
+    -fx-background-color: #bcd9f0;
 }
 
+/* Pressed: flatten the shelf and nudge the button into its own shadow. */
 .button:pressed {
-    -fx-background-color: #326b7d;
-    -fx-border-width: 2 2 2 2;
-    -fx-translate-y: 2;
+    -fx-background-color: #8fb4d6;
+    -fx-border-width: 2.5;
+    -fx-effect: dropshadow(one-pass-box, #1c3350, 0, 1.0, 1, 1);
+    -fx-translate-x: 4;
+    -fx-translate-y: 4;
 }
