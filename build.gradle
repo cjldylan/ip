@@ -57,6 +57,9 @@ test {
 
 application {
     mainClass = 'baemax.Launcher'
+    // Enable assert statements for `gradlew run`; a plain `java -jar` launch
+    // needs -ea passed explicitly, since a shipped app runs with them off.
+    applicationDefaultJvmArgs = ['-ea']
 }
 
 jar {
