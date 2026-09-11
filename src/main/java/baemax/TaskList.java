@@ -25,6 +25,9 @@ public class TaskList {
      * @param initialTasks the tasks to start with
      */
     public TaskList(List<Task> initialTasks) {
+        // Storage.load() always returns a list, even when empty, so a null
+        // here would mean a caller broke that contract.
+        assert initialTasks != null : "initialTasks must not be null";
         this.tasks = new ArrayList<>(initialTasks);
     }
 
