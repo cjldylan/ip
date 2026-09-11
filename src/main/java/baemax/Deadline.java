@@ -38,4 +38,16 @@ public class Deadline extends Task {
     public String toFileFormat() {
         return "D | " + super.toFileFormat() + " | " + by.toStorageString();
     }
+
+    /**
+     * Returns an independent copy of this deadline.
+     *
+     * @return a new deadline with the same description, due date, and done state
+     */
+    @Override
+    public Task copy() {
+        Deadline copy = new Deadline(getDescription(), by);
+        copyDoneStatusInto(copy);
+        return copy;
+    }
 }

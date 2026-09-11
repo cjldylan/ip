@@ -93,4 +93,29 @@ public class TaskList {
                 .filter(task -> task.getDescription().toLowerCase().contains(needle))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Returns an independent copy of every task in this list, for restoring
+     * later via {@link #restoreFrom}. Each task is copied rather than
+     * referenced, so a later change such as {@code markAsDone} on a live
+     * task does not alter the snapshot.
+     *
+     * @return a snapshot of the current tasks, in list order
+     */
+    public List<Task> snapshot() {
+        return tasks.stream()
+                .map(Task::copy)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Replaces every task in this list with the given ones, e.g. to undo back
+     * to a snapshot taken before a command ran.
+     *
+     * @param snapshot the tasks to restore, in list order
+     */
+    public void restoreFrom(List<Task> snapshot) {
+        tasks.clear();
+        tasks.addAll(snapshot);
+    }
 }

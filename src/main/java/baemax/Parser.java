@@ -32,7 +32,7 @@ public class Parser {
         }
         throw new BaemaxException(
                 "Baemax does not know that command yet. "
-                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, undo, or bye.");
     }
 
     /**

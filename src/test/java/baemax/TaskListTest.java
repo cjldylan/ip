@@ -102,4 +102,29 @@ public class TaskListTest {
         list.add(new Todo("buy milk"));
         assertEquals(0, list.find("book").size());
     }
+
+    @Test
+    public void snapshot_thenMutateLiveTask_leavesSnapshotUnaffected() {
+        TaskList list = new TaskList();
+        list.add(new Todo("a"));
+
+        List<Task> snapshot = list.snapshot();
+        list.get(1).markAsDone();
+
+        assertEquals("[T][ ] a", snapshot.get(0).toString());
+        assertEquals("[T][X] a", list.get(1).toString());
+    }
+
+    @Test
+    public void restoreFrom_replacesCurrentContentsWithTheSnapshot() {
+        TaskList list = new TaskList();
+        list.add(new Todo("a"));
+        List<Task> snapshot = list.snapshot();
+
+        list.add(new Todo("b"));
+        list.restoreFrom(snapshot);
+
+        assertEquals(1, list.size());
+        assertEquals("[T][ ] a", list.get(1).toString());
+    }
 }

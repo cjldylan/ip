@@ -32,4 +32,16 @@ public class Todo extends Task {
     public String toFileFormat() {
         return "T | " + super.toFileFormat();
     }
+
+    /**
+     * Returns an independent copy of this todo.
+     *
+     * @return a new todo with the same description and done state
+     */
+    @Override
+    public Task copy() {
+        Todo copy = new Todo(getDescription());
+        copyDoneStatusInto(copy);
+        return copy;
+    }
 }

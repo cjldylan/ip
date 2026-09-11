@@ -43,4 +43,16 @@ public class Event extends Task {
     public String toFileFormat() {
         return "E | " + super.toFileFormat() + " | " + from.toStorageString() + " | " + to.toStorageString();
     }
+
+    /**
+     * Returns an independent copy of this event.
+     *
+     * @return a new event with the same description, date range, and done state
+     */
+    @Override
+    public Task copy() {
+        Event copy = new Event(getDescription(), from, to);
+        copyDoneStatusInto(copy);
+        return copy;
+    }
 }
