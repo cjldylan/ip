@@ -141,7 +141,7 @@ public class Baemax {
      * @throws BaemaxException when the command is invalid
      */
     private String processCommand(String command) throws BaemaxException {
-        String trimmedCommand = command.trim();
+        String trimmedCommand = normalizeCommandWordCase(command.trim());
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
                     "Baemax did not catch a command. Try help, todo, list, find, mark, delete, undo, or bye.");
@@ -164,6 +164,24 @@ public class Baemax {
         } else {
             return addTask(Parser.parseTask(trimmedCommand));
         }
+    }
+
+    /**
+     * Lower-cases just the command word so that {@code TODO}, {@code Mark},
+     * and the like are recognised the same as their lowercase form, while
+     * leaving everything after the first space - descriptions, keywords,
+     * dates - exactly as the user typed it.
+     *
+     * @param trimmedCommand the command text with leading/trailing whitespace
+     *     already removed
+     * @return the same text with only its first word lower-cased
+     */
+    private static String normalizeCommandWordCase(String trimmedCommand) {
+        int firstSpace = trimmedCommand.indexOf(' ');
+        if (firstSpace < 0) {
+            return trimmedCommand.toLowerCase();
+        }
+        return trimmedCommand.substring(0, firstSpace).toLowerCase() + trimmedCommand.substring(firstSpace);
     }
 
     /** Returns every stored task, numbered from one. */

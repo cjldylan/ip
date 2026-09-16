@@ -162,4 +162,26 @@ public class BaemaxTest {
     public void getReply_help_isNotAnError() {
         assertFalse(freshBaemax().getReply("help").isError());
     }
+
+    @Test
+    public void getResponse_uppercaseCommandWord_isTreatedLikeLowercase() {
+        Baemax baemax = freshBaemax();
+        String response = baemax.getResponse("TODO read book");
+        assertTrue(response.contains("[T][ ] read book"));
+    }
+
+    @Test
+    public void getResponse_mixedCaseCommandWord_isTreatedLikeLowercase() {
+        Baemax baemax = freshBaemax();
+        baemax.getResponse("todo read book");
+        String response = baemax.getResponse("Mark 1");
+        assertTrue(response.contains("[T][X] read book"));
+    }
+
+    @Test
+    public void getResponse_commandWordCaseChangeDoesNotAffectDescriptionCase() {
+        Baemax baemax = freshBaemax();
+        String response = baemax.getResponse("TODO Read BOOK");
+        assertTrue(response.contains("[T][ ] Read BOOK"));
+    }
 }

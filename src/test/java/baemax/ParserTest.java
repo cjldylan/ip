@@ -62,6 +62,18 @@ public class ParserTest {
         assertThrows(BaemaxException.class, () -> Parser.parseTask("event camp /to 2019-08-07"));
     }
 
+    @Test
+    public void parseTask_eventEndsBeforeItStarts_throwsBaemaxException() {
+        String command = "event camp /from 2019-08-07 /to 2019-08-05";
+        assertThrows(BaemaxException.class, () -> Parser.parseTask(command));
+    }
+
+    @Test
+    public void parseTask_eventEndsAtSameDayEarlierTime_throwsBaemaxException() {
+        String command = "event camp /from 2019-08-05 1800 /to 2019-08-05 0900";
+        assertThrows(BaemaxException.class, () -> Parser.parseTask(command));
+    }
+
     // ---- parseTask: unknown ----
 
     @Test
@@ -105,5 +117,12 @@ public class ParserTest {
     @Test
     public void parseTaskNumber_emptyList_anyNumberOutOfRange() {
         assertThrows(BaemaxException.class, () -> Parser.parseTaskNumber("mark 1", "mark", 0));
+    }
+
+    @Test
+    public void parseTaskNumber_emptyList_explainsTheListIsEmpty() {
+        BaemaxException exception =
+                assertThrows(BaemaxException.class, () -> Parser.parseTaskNumber("mark 1", "mark", 0));
+        assertEquals("Your task list is empty, so there's nothing to mark.", exception.getMessage());
     }
 }

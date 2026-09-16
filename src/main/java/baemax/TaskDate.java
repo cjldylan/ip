@@ -133,6 +133,27 @@ public class TaskDate {
     }
 
     /**
+     * Returns whether this date/time is strictly after {@code other}, treating
+     * a date with no time as the very start of that day.
+     *
+     * @param other the date/time to compare against
+     * @return {@code true} when this date/time comes after {@code other}
+     */
+    public boolean isAfter(TaskDate other) {
+        return toComparable().isAfter(other.toComparable());
+    }
+
+    /**
+     * Returns this date/time as a {@link LocalDateTime}, so two dates can be
+     * compared even when only one of them carries a time.
+     *
+     * @return this date at its time, or at midnight when no time is set
+     */
+    private LocalDateTime toComparable() {
+        return LocalDateTime.of(date, time == null ? LocalTime.MIDNIGHT : time);
+    }
+
+    /**
      * Tries each accepted date format in turn.
      *
      * @param text the candidate date text
