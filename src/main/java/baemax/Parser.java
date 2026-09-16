@@ -98,7 +98,13 @@ public class Parser {
         requireNonEmpty(description, "An event needs a description, a start date, and an end date.");
         requireNonEmpty(from, "An event needs a description, a start date, and an end date.");
         requireNonEmpty(to, "An event needs a description, a start date, and an end date.");
-        return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
+
+        TaskDate fromDate = TaskDate.parse(from);
+        TaskDate toDate = TaskDate.parse(to);
+        if (fromDate.isAfter(toDate)) {
+            throw new BaemaxException("An event's end can't be before its start. Check the /from and /to dates.");
+        }
+        return new Event(description, fromDate, toDate);
     }
 
     /**
@@ -125,6 +131,9 @@ public class Parser {
             throw new BaemaxException("Task numbers look like 1, 2, or 3—not words.");
         }
 
+        if (taskCount == 0) {
+            throw new BaemaxException("Your task list is empty, so there's nothing to " + action + ".");
+        }
         if (taskNumber < 1 || taskNumber > taskCount) {
             throw new BaemaxException(
                     "That task number is out of range. Choose a number from 1 to " + taskCount + ".");
