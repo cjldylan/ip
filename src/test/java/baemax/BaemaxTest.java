@@ -40,7 +40,7 @@ public class BaemaxTest {
     public void getResponse_unknownCommand_returnsErrorMessage() {
         assertEquals(
                 "Baemax does not know that command yet. "
-                        + "Try todo, deadline, event, list, find, mark, unmark, delete, undo, or bye.",
+                        + "Try help, todo, deadline, event, list, find, mark, unmark, delete, undo, or bye.",
                 freshBaemax().getResponse("sing a song"));
     }
 
@@ -141,5 +141,25 @@ public class BaemaxTest {
     @Test
     public void getReply_outOfRangeTaskNumber_isAnError() {
         assertTrue(freshBaemax().getReply("mark 1").isError());
+    }
+
+    @Test
+    public void getResponse_help_listsEveryCommand() {
+        String response = freshBaemax().getResponse("help");
+        assertTrue(response.contains("todo"));
+        assertTrue(response.contains("deadline"));
+        assertTrue(response.contains("event"));
+        assertTrue(response.contains("list"));
+        assertTrue(response.contains("find"));
+        assertTrue(response.contains("mark"));
+        assertTrue(response.contains("unmark"));
+        assertTrue(response.contains("delete"));
+        assertTrue(response.contains("undo"));
+        assertTrue(response.contains("bye"));
+    }
+
+    @Test
+    public void getReply_help_isNotAnError() {
+        assertFalse(freshBaemax().getReply("help").isError());
     }
 }
