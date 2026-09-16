@@ -46,7 +46,7 @@ public class BaemaxTest {
 
     @Test
     public void getResponse_bye_returnsFarewell() {
-        assertEquals("Bye! Baemax is powering down. Have a lovely day!",
+        assertEquals("Bye! I am satisfied with the care I have provided today. Have a lovely day!",
                 freshBaemax().getResponse("bye"));
     }
 
@@ -183,5 +183,27 @@ public class BaemaxTest {
         Baemax baemax = freshBaemax();
         String response = baemax.getResponse("TODO Read BOOK");
         assertTrue(response.contains("[T][ ] Read BOOK"));
+    }
+
+    @Test
+    public void getResponse_mark_endsWithEncouragement() {
+        Baemax baemax = freshBaemax();
+        baemax.getResponse("todo read book");
+        String response = baemax.getResponse("mark 1");
+        assertTrue(response.contains("Great job looking after yourself!"));
+    }
+
+    @Test
+    public void getResponse_unmark_endsWithReassurance() {
+        Baemax baemax = freshBaemax();
+        baemax.getResponse("todo read book");
+        baemax.getResponse("mark 1");
+        String response = baemax.getResponse("unmark 1");
+        assertTrue(response.contains("No worries, take your time."));
+    }
+
+    @Test
+    public void getResponse_help_hasACaringIntro() {
+        assertTrue(freshBaemax().getResponse("help").contains("take care of your tasks"));
     }
 }

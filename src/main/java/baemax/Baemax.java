@@ -75,7 +75,7 @@ public class Baemax {
      */
     public Reply getReply(String input) {
         if (input.trim().equals("bye")) {
-            return new Reply("Bye! Baemax is powering down. Have a lovely day!", false);
+            return new Reply("Bye! I am satisfied with the care I have provided today. Have a lovely day!", false);
         }
         try {
             return new Reply(processCommand(input), false);
@@ -192,7 +192,7 @@ public class Baemax {
     /** Returns a summary of every command Baemax understands and how to use it. */
     private String help() {
         return lines(
-                "Here's what I can do:",
+                "Here's what I can do to help take care of your tasks:",
                 "  todo <description>",
                 "  deadline <description> /by <date> [time]",
                 "  event <description> /from <date> [time] /to <date> [time]",
@@ -256,15 +256,18 @@ public class Baemax {
         Task task = tasks.get(taskNumber);
 
         String heading;
+        String encouragement;
         if (completed) {
             task.markAsDone();
             heading = "Nice! I've marked this task as done:";
+            encouragement = "Great job looking after yourself!";
         } else {
             task.markAsUndone();
             heading = "OK, I've marked this task as not done yet:";
+            encouragement = "No worries, take your time.";
         }
         storage.save(tasks.asList());
-        return lines(heading, "  " + task);
+        return lines(heading, "  " + task, encouragement);
     }
 
     /**

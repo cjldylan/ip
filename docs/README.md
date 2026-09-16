@@ -101,6 +101,7 @@ Example: `mark 1`
 ```
 Nice! I've marked this task as done:
   [T][X] read book
+Great job looking after yourself!
 ```
 
 ### Marking a task as not done: `unmark`
@@ -112,6 +113,7 @@ Example: `unmark 1`
 ```
 OK, I've marked this task as not done yet:
   [T][ ] read book
+No worries, take your time.
 ```
 
 ### Deleting a task: `delete`
