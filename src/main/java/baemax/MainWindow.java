@@ -41,12 +41,13 @@ public class MainWindow extends AnchorPane {
     public void setBaemax(Baemax b) {
         baemax = b;
         dialogContainer.getChildren().add(
-                DialogBox.getBaemaxDialog(baemax.getWelcomeMessage(), baemaxImage));
+                DialogBox.getBaemaxDialog(baemax.getWelcomeMessage(), baemaxImage, false));
     }
 
     /**
-     * Shows the user's input and Baemax's reply as dialog boxes, then clears
-     * the input field. Closes the window shortly after a {@code bye} command.
+     * Shows the user's input and Baemax's reply as dialog boxes - the reply
+     * styled as an error when the command failed - then clears the input
+     * field. Closes the window shortly after a {@code bye} command.
      */
     @FXML
     private void handleUserInput() {
@@ -55,10 +56,10 @@ public class MainWindow extends AnchorPane {
             return;
         }
 
-        String response = baemax.getResponse(input);
+        Baemax.Reply reply = baemax.getReply(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getBaemaxDialog(response, baemaxImage));
+                DialogBox.getBaemaxDialog(reply.text(), baemaxImage, reply.isError()));
         userInput.clear();
 
         if (input.trim().equals("bye")) {

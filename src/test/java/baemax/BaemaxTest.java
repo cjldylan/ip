@@ -118,4 +118,28 @@ public class BaemaxTest {
         baemax.getResponse("undo");
         assertEquals("Here are the tasks in your list:\n1. [T][ ] read book", baemax.getResponse("list"));
     }
+
+    @Test
+    public void getReply_successfulCommand_isNotAnError() {
+        Baemax.Reply reply = freshBaemax().getReply("todo read book");
+        assertFalse(reply.isError());
+        assertTrue(reply.text().contains("read book"));
+    }
+
+    @Test
+    public void getReply_bye_isNotAnError() {
+        assertFalse(freshBaemax().getReply("bye").isError());
+    }
+
+    @Test
+    public void getReply_invalidCommand_isAnError() {
+        Baemax.Reply reply = freshBaemax().getReply("sing a song");
+        assertTrue(reply.isError());
+        assertTrue(reply.text().contains("does not know that command"));
+    }
+
+    @Test
+    public void getReply_outOfRangeTaskNumber_isAnError() {
+        assertTrue(freshBaemax().getReply("mark 1").isError());
+    }
 }

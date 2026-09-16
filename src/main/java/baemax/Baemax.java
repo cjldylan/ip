@@ -56,19 +56,64 @@ public class Baemax {
     }
 
     /**
-     * Handles one line of user input and returns Baemax's reply.
+     * Handles one line of user input and returns Baemax's reply text.
      *
      * @param input the raw command entered by the user
      * @return the reply to show the user
      */
     public String getResponse(String input) {
+        return getReply(input).text();
+    }
+
+    /**
+     * Handles one line of user input and returns Baemax's reply, along with
+     * whether that reply was an error - so a front end can style the two
+     * differently, e.g. a GUI colouring an error reply's bubble.
+     *
+     * @param input the raw command entered by the user
+     * @return the reply
+     */
+    public Reply getReply(String input) {
         if (input.trim().equals("bye")) {
-            return "Bye! Baemax is powering down. Have a lovely day!";
+            return new Reply("Bye! Baemax is powering down. Have a lovely day!", false);
         }
         try {
-            return processCommand(input);
+            return new Reply(processCommand(input), false);
         } catch (BaemaxException exception) {
-            return exception.getMessage();
+            return new Reply(exception.getMessage(), true);
+        }
+    }
+
+    /**
+     * One reply from Baemax: the text to show, and whether it reports an
+     * error rather than a successful command.
+     */
+    public static final class Reply {
+        private final String text;
+        private final boolean error;
+
+        private Reply(String text, boolean error) {
+            this.text = text;
+            this.error = error;
+        }
+
+        /**
+         * Returns the reply text to show the user.
+         *
+         * @return the reply text
+         */
+        public String text() {
+            return text;
+        }
+
+        /**
+         * Returns whether this reply reports an error.
+         *
+         * @return {@code true} for an error reply, {@code false} for a
+         *     successful command's reply
+         */
+        public boolean isError() {
+            return error;
         }
     }
 
