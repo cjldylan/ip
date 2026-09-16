@@ -144,7 +144,7 @@ public class Baemax {
         String trimmedCommand = command.trim();
         if (trimmedCommand.isEmpty()) {
             throw new BaemaxException(
-                    "Baemax did not catch a command. Try todo, list, find, mark, delete, undo, or bye.");
+                    "Baemax did not catch a command. Try help, todo, list, find, mark, delete, undo, or bye.");
         }
 
         if (trimmedCommand.equals("list")) {
@@ -159,6 +159,8 @@ public class Baemax {
             return findTasks(trimmedCommand);
         } else if (trimmedCommand.equals("undo")) {
             return undo();
+        } else if (trimmedCommand.equals("help")) {
+            return help();
         } else {
             return addTask(Parser.parseTask(trimmedCommand));
         }
@@ -167,6 +169,25 @@ public class Baemax {
     /** Returns every stored task, numbered from one. */
     private String displayTasks() {
         return numberedList("Here are the tasks in your list:", tasks.asList());
+    }
+
+    /** Returns a summary of every command Baemax understands and how to use it. */
+    private String help() {
+        return lines(
+                "Here's what I can do:",
+                "  todo <description>",
+                "  deadline <description> /by <date> [time]",
+                "  event <description> /from <date> [time] /to <date> [time]",
+                "  list",
+                "  find <keyword>",
+                "  mark <task number>",
+                "  unmark <task number>",
+                "  delete <task number>",
+                "  undo",
+                "  bye",
+                "",
+                "Dates look like 2026-09-20, 20/9/2026, or 20 Sep 2026, optionally",
+                "followed by a time like 1800, 6pm, or 6:30pm.");
     }
 
     /**
