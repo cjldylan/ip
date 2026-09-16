@@ -72,11 +72,15 @@ public class DialogBox extends HBox {
      *
      * @param text Baemax's message
      * @param image Baemax's avatar
+     * @param isError whether to style this bubble as an error reply
      * @return the flipped dialog box
      */
-    public static DialogBox getBaemaxDialog(String text, Image image) {
+    public static DialogBox getBaemaxDialog(String text, Image image, boolean isError) {
         DialogBox box = new DialogBox(text, image);
         box.flip();
+        if (isError) {
+            box.getStyleClass().add("error");
+        }
         return box;
     }
 }

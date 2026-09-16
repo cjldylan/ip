@@ -71,6 +71,14 @@
     -fx-effect: dropshadow(one-pass-box, #12233a, 0, 1.0, 5, 5);
 }
 
+/* A reply that reports an error: same shape, warning-red face instead. */
+.dialog-box.reply.error .bubble {
+    -fx-background-color: #c94444;
+    -fx-border-color: #6b1f1f;
+    -fx-text-fill: #fff5f5;
+    -fx-effect: dropshadow(one-pass-box, #3d0f0f, 0, 1.0, 5, 5);
+}
+
 /* ---- input row ---- */
 
 .text-field {
