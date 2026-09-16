@@ -39,3 +39,12 @@ runs the GUI version the same way IntelliJ's `Launcher.main()` does. To build a 
 ./gradlew shadowJar
 java -jar build/libs/baemax.jar
 ```
+
+## Credits
+
+Parts of this project were adapted from course-provided material rather than written from scratch:
+
+- The GUI's structure (`Launcher` → `Main` → `MainWindow` + `DialogBox`, and using FXML for the layout) follows the [SE-EDU JavaFX tutorial](https://se-education.org/guides/tutorials/javaFxPart1.html).
+- The Gradle build setup came from the course's `add-gradle-support` branch of this template repository.
+- `config/checkstyle/checkstyle.xml` and `suppressions.xml` are copied from [AddressBook Level 3](https://github.com/se-edu/addressbook-level3), the SE-EDU teaching codebase.
+- The fonts bundled in `src/main/resources/fonts/` are [VT323](https://fonts.google.com/specimen/VT323) and [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P), both by their respective Google Fonts contributors under the SIL Open Font License (license text included alongside each font).
